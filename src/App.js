@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 //import logo from './logo.svg';
 //import ReactDOM from 'react-dom';
-import {Button, Drawer, Icon, Input, Layout, Menu, message,Select} from 'antd';
+import {Button, Drawer, Icon, Input, Layout, Menu, message,Select,Card,Popover,Modal,Steps} from 'antd';
 import {BrowserRouter as HashRouter, Route, Link} from 'react-router-dom';
 // import Head from '@/pages/Head';
 import Welcome from '@/pages/Welcome';
@@ -9,6 +9,7 @@ import B_O_Add from '@/pages/booking/BookingOfAdd';
 import B_O_HY from '@/pages/booking/BookingOfHY';
 import B_O_Time from '@/pages/booking/BookingOfTime';
 import '@/css/Layout.css';
+import '@/css/LoginCard.css';
 import '@/App.css';
 import logo from "@/img/logo/logo1024.png";
 import FindHY from "./pages/user/FindHY";
@@ -19,6 +20,9 @@ class App extends Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
+            display_Forget:'none',
+            display_Menu:'none',
+            display_Login:'block',
             display_GLY:'none',
             display_User:'none',
             display_Visitor:'block',
@@ -26,10 +30,93 @@ class App extends Component {
             menu_mode:'inline',//vertical
             width: '200px',
             collapsed:true,
+            username: "",
+            password: "",
+            visible: false,
+            name:"请先登陆",
+            loading: false,
+
 
         }
     }
-    changeMode(msg) {
+    //点击登陆后旋转2秒
+    overLoading = () => {
+        setInterval(() => {this.setState({ loading: false })}, 2000);
+    }
+    //发送登陆请求
+    sendAjax = () =>{
+        //POST方式,IP为本机IP
+        const username=this.state.username;//this.state.username;
+        const password=this.state.password;//this.state.password;
+        if(username===""||password===""){
+            message.warning("用户名或密码不能为空！");
+        }else{
+            fetch("http://39.106.56.132:8080/userinfo/tologin", {
+
+                method: "POST",
+                //type:"post",
+                //url:"http://39.106.56.132:8080/userinfo/tologin",
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json;charset=utf-8",
+                },
+                body: JSON.stringify({username:username,password:password}),
+            }).then(function (res) {//function (res) {} 和 res => {}效果一致
+                return res.json()
+            }).then(json => {
+                // get result
+                const data = json;
+                console.log(data);
+                if(data.message==="登陆成功"){
+                    this.nameChange(data.data.name);
+                    message.success(data.message);
+                    this.setState({
+                        display_Menu:'block',
+                        display_Login:'none',
+                    });
+                }else if(data.message==="账号密码有误"){
+                    message.error("用户名或密码错误！");
+                }else {
+                    message.error("未知错误");
+                }
+
+            }).catch(function (e) {
+                console.log("fetch fail");
+                alert('系统错误');
+            });
+
+        }
+
+    }
+    //修改用户名显示
+    nameChange=(e)=>{
+        this.setState({ name : e })
+    }
+    //退出登陆
+    loginOut=()=>{
+        this.setState({
+            display_Forget:'none',
+            display_Menu:'none',
+            display_Login:'block',
+            name:"请先登陆",
+        });
+    }
+    //登陆与加载
+    enterLoading = () => {
+        this.setState({ loading: true });
+        this.sendAjax();
+        this.overLoading();
+    }
+    //username被修改
+    usernameChange=(e)=>{
+        this.setState({ username : e.target.value })
+    }
+    //password被修改
+    passwordChange=(e)=>{
+        this.setState({ password : e.target.value })
+    }
+    //改变模式
+    changeMode=(msg)=> {
         if(msg==="管理员模式"){
             this.setState({
                 display_GLY:'block',
@@ -57,9 +144,18 @@ class App extends Component {
             });
         }
     }
-    toggle = () => {
+    //显示找回密码
+    showForget=()=>{
         this.setState({
-            collapsed: !this.state.collapsed,
+            display_Forget:'block',
+            display_Login:'none',
+        });
+    }
+    //
+    showLogin=()=>{
+        this.setState({
+            display_Forget:'none',
+            display_Login:'block',
         });
     }
     render() {
@@ -68,11 +164,11 @@ class App extends Component {
                 <HashRouter>
                 <Layout>
                     <Layout.Header className={'Head'}>
-                        <Head changeMode = {(msg) => this.changeMode(msg)} ></Head>
+                        <Head changeMode = {(msg) => this.changeMode(msg)} loginOut = {() => this.loginOut()} name={this.state.name}></Head>
                     </Layout.Header>
                     <Layout>
                         {/************************************左边菜单栏************************************/}
-                        <Layout.Sider trigger={null} collapsible collapsed={this.state.collapsed} style={{color: '#fff',backgroundColor:'#fff'}}>
+                        <Layout.Sider trigger={null} collapsible collapsed={this.state.collapsed} style={{color: '#fff',backgroundColor:'#fff',display:this.state.display_Menu}}>
                             <Menu className='leftSider' mode={this.state.menu_mode} theme='light' style={{color: '#000',backgroundColor:'#ffffff'}}>
                                 {/*<Menu.Item style={{display:this.state.display_name}}>*/}
                                 {/*<span ><Icon type='home'/>Home</span>*/}
@@ -149,11 +245,38 @@ class App extends Component {
 
                         {/************************************核心页面************************************/}
                         <Layout.Content className='contentLayout'>
+                            {/*登陆*/}
+                            <Card title="登陆" className={"loginCard"} style={{ width: 600,display:this.state.display_Login }}>
+                                <Input type='' placeholder='用户名' onKeyUp={this.usernameChange}></Input>
+                                <br/>
+                                <br/>
+                                <Input type='password' placeholder='密码' onKeyUp={this.passwordChange}></Input>
+                                <Button className={'headBtn1'} type='default' onClick={this.showForget}>忘记密码</Button>
+                                <Button className={'headBtn2'} type='primary' loading={this.state.loading} onClick={this.enterLoading} >登陆</Button>
+                                <Button className={'headBtn3'} type='default' onClick={this.sendAjax}>还没有账号？点击注册</Button>
+                            </Card>
+                            {/*找回密码*/}
+                            <Card title="找回密码" className={"forgetCard"} style={{ width: 600,display:this.state.display_Forget }}>
+                                <Steps progressDot current={1}>
+                                    <Steps.Step title="第一步" description="This " />
+                                    <Steps.Step title="第二步" description="This " />
+                                    <Steps.Step title="第三步" description="This " />
+                                </Steps>
+                                <Input type='' placeholder='手机号' onKeyUp={this.passwordChange}></Input>
+                                <br/>
+                                <br/>
+                                <Input type='password' placeholder='密码' onKeyUp={this.passwordChange}></Input>
+                                <Button className={'headBtn1'} type='default' onClick={this.showLogin}>返回登陆</Button>
+                                <Button className={'headBtn1'} type='default' onClick={this.showLogin}>获取验证码</Button>
+                                <Input type='' className={'headBtn2'} placeholder='输入验证码'  onClick={this.enterLoading} ></Input>
+                            </Card>
+                            {/*登陆后内部页面链接*/}
                             <Route path={"/book/address"} component={B_O_Add} />
                             <Route path={"/book/time"} component={B_O_Time} />
                             <Route path={"/book/HY"} component={B_O_HY} />
                             <Route path={"/user/findHY"} component={FindHY} />
                             <Route path={"/welcome"} component={Welcome} />
+
                         </Layout.Content>
 
                     </Layout>
@@ -194,6 +317,7 @@ class Head extends Component {
             visible: false,
             name:"登陆",
             loading: false,
+
         }
     }
     //模块选择
@@ -282,8 +406,29 @@ class Head extends Component {
         }
 
     }
+    showModal = () => {
+        this.setState({
+            visible: true,
+        });
+    }
+
+    handleOk = (e) => {
+        console.log(e);
+        this.props.loginOut();
+        this.setState({
+            visible: false,
+        });
+    }
+
+    handleCancel = (e) => {
+        console.log(e);
+        this.setState({
+            visible: false,
+        });
+    }
     //主函数
     render() {
+        const loginOut=(<div onClick={this.showDrawer}>{"退出登陆"}</div>);
         return (
             <div className={'head'}>
                 {/*right*/}
@@ -302,21 +447,35 @@ class Head extends Component {
                     <Select.Option value="管理员模式">管理员模式</Select.Option>
                     <Select.Option value="用户模式">用户模式</Select.Option>
                 </Select>
-                <Button className={'headBtn1'} type="primary" onClick={this.showDrawer}>{this.state.name}</Button>
+                {/*退出登录*/}
+                <Popover title="" content={loginOut} >
+                    <Button className={'headBtn1'} type="primary" >{this.props.name}</Button>
+                </Popover>,
+
                 <Button className={'headBtn1'} type='primary' onClick={this.loginRole}><Icon type="ellipsis" /></Button>
                 <Input className={'searchText'} suffix={<Icon type="search"  />} />
-
-                <Drawer title="用户登录" placement="right" onClose={this.onClose} visible={this.state.visible}>
-                    <p>用户</p>
-                    <Input type='' placeholder='用户名' onKeyUp={this.usernameChange}></Input>
-                    <br/>
-                    <br/>
-                    <p>密码</p>
-                    <Input type='password' placeholder='密码' onKeyUp={this.passwordChange}></Input>
-                    <Button className={'headBtn1'} type='default' onClick={this.onClose}>忘记密码</Button>
-                    <Button className={'headBtn2'} type='primary' loading={this.state.loading} onClick={this.enterLoading} >登陆</Button>
-                    <Button className={'headBtn3'} type='default' onClick={this.sendAjax}>还没有账号？点击注册</Button>
-                </Drawer>
+                {/*抽屉式登陆页面*/}
+                {/*<Drawer title="用户登录" placement="right" onClose={this.onClose} visible={this.state.visible}>*/}
+                    {/*<p>用户</p>*/}
+                    {/*<Input type='' placeholder='用户名' onKeyUp={this.usernameChange}></Input>*/}
+                    {/*<br/>*/}
+                    {/*<br/>*/}
+                    {/*<p>密码</p>*/}
+                    {/*<Input type='password' placeholder='密码' onKeyUp={this.passwordChange}></Input>*/}
+                    {/*<Button className={'headBtn1'} type='default' onClick={this.onClose}>忘记密码</Button>*/}
+                    {/*<Button className={'headBtn2'} type='primary' loading={this.state.loading} onClick={this.enterLoading} >登陆</Button>*/}
+                    {/*<Button className={'headBtn3'} type='default' onClick={this.sendAjax}>还没有账号？点击注册</Button>*/}
+                {/*</Drawer>*/}
+                {/*退出登陆*/}
+                <Modal
+                    visible={this.state.visible}
+                    onOk={this.handleOk}
+                    onCancel={this.handleCancel}
+                    okText={"确定"}
+                    cancelText={"取消"}
+                >
+                    <h2>您确定要退出吗？</h2>
+                </Modal>
 
             </div>
         );
