@@ -20,6 +20,7 @@ class App extends Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
+            display_Head:'none',
             display_Forget:'none',
             display_Menu:'none',
             display_Login:'block',
@@ -71,6 +72,7 @@ class App extends Component {
                     this.nameChange(data.data.name);
                     message.success(data.message);
                     this.setState({
+                        display_Head:'block',
                         display_Menu:'block',
                         display_Login:'none',
                     });
@@ -95,6 +97,7 @@ class App extends Component {
     //退出登陆
     loginOut=()=>{
         this.setState({
+            display_Head:'none',
             display_Forget:'none',
             display_Menu:'none',
             display_Login:'block',
@@ -147,6 +150,7 @@ class App extends Component {
     //显示找回密码
     showForget=()=>{
         this.setState({
+            display_Head:'none',
             display_Forget:'block',
             display_Login:'none',
         });
@@ -154,6 +158,7 @@ class App extends Component {
     //
     showLogin=()=>{
         this.setState({
+            display_Head:'none',
             display_Forget:'none',
             display_Login:'block',
         });
@@ -163,8 +168,8 @@ class App extends Component {
             <div className="App">
                 <HashRouter>
                 <Layout>
-                    <Layout.Header className={'Head'}>
-                        <Head changeMode = {(msg) => this.changeMode(msg)} loginOut = {() => this.loginOut()} name={this.state.name}></Head>
+                    <Layout.Header className={'Head'} style={{display:this.state.display_Head}} >
+                        <Head changeMode = {(msg) => this.changeMode(msg)} loginOut = {() => this.loginOut()} name={this.state.name} ></Head>
                     </Layout.Header>
                     <Layout>
                         {/************************************左边菜单栏************************************/}
@@ -178,7 +183,6 @@ class App extends Component {
                                 <Menu.Item onClick={this.toggle}>
                                     <Icon type='home' />
                                     <span >菜单</span>
-
                                 </Menu.Item>
                                 {/*管理员功能模块*/}
                                 <Menu.SubMenu  title={<span><Icon type='tool'/><span>用户管理</span></span>} style={{display:this.state.display_GLY}}>
@@ -430,7 +434,7 @@ class Head extends Component {
     render() {
         const loginOut=(<div onClick={this.showDrawer}>{"退出登陆"}</div>);
         return (
-            <div className={'head'}>
+            <div className={'head'} style={this.props.style}>
                 {/*right*/}
                 {/*<div>{this.props.name}</div>*/}
                 <img src={logo} className="App-logo logo" alt="logo" />
