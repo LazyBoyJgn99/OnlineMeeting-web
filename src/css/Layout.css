@@ -48,5 +48,18 @@
 .contentLayout{
     min-height: 800px;
 }
-
+/*忘记密码*/
+.phoneCodeInput{
+    float: left;
+    margin: 18px 0px 0 0px;
+    width: 200px;
+}
+.forgetBtn1{
+    float: right;
+    margin: 18px 0px 0 15px;
+}
+.forgetBtn2{
+    float: left;
+    margin: 18px 0px 0 15px;
+}
 

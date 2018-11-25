@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 //import logo from './logo.svg';
 //import ReactDOM from 'react-dom';
-import {Button, Drawer, Icon, Input, Layout, Menu, message,Select,Card,Popover,Modal,Steps} from 'antd';
+import {Button, Icon, Input, Layout, Menu, message,Select,Card,Popover,Modal,Steps} from 'antd';
 import {BrowserRouter as HashRouter, Route, Link} from 'react-router-dom';
 // import Head from '@/pages/Head';
 import Welcome from '@/pages/Welcome';
@@ -15,44 +15,245 @@ import logo from "@/img/logo/logo1024.png";
 import FindHY from "./pages/user/FindHY";
 
 class App extends Component {
-
-
     constructor(props, context) {
         super(props, context);
         this.state = {
             display_Head:'none',
             display_Forget:'none',
+            display_Change:'none',
+            display_ChangeSuccess:'none',
             display_Menu:'none',
             display_Login:'block',
             display_GLY:'none',
             display_User:'none',
             display_Visitor:'block',
             display_name: 'block', //此状态机为display的取值
+            disabled_getCode:false,
             menu_mode:'inline',//vertical
             width: '200px',
             collapsed:true,
             username: "",
             password: "",
+            new_password:"",
+            phone:"",
+            phone_code:"",
+            pwd_code:"!!!",
+            codeTime:0,
             visible: false,
             name:"请先登陆",
             loading: false,
-
-
         }
+    }
+    /////////////////////////////////////////////////Input输入的及时改变/////////////////////////////////////////////////
+    //username被修改
+    usernameChange=(e)=>{
+        this.setState({ username : e.target.value })
+    }
+    //password被修改
+    passwordChange=(e)=>{
+        this.setState({ password : e.target.value })
+    }
+    //手机号被修改
+    phoneChange=(e)=>{
+        this.setState({ phone : e.target.value })
+    }
+    //验证码被修改
+    phoneCodeChange=(e)=>{
+        this.setState({ phone_code : e.target.value })
+    }
+    //newPassword被修改
+    newPasswordChange=(e)=>{
+        this.setState({ new_password : e.target.value })
+    }
+    /////////////////////////////////////////////////找回密码/////////////////////////////////////////////////
+    //验证验证码
+    compareCode=()=>{
+        if(this.state.phone_code===this.state.pwd_code){
+            message.success("验证成功！");
+            this.showChangePwd();
+        }else {
+            message.error("验证失败！");
+        }
+    }
+    //验证验两次密码输入
+    comparePassword=()=>{
+        if(this.state.password===this.state.new_password){
+            this.changePwd();
+        }else {
+            message.error("两次密码输入不一致！");
+        }
+    }
+    //获取验证码60s
+    codeTime=()=>{
+        const timer =setInterval(()=> {
+            // console.log(this.state.codeTime);
+                if(this.state.codeTime>0){
+                    this.setState({
+                        codeTime:this.state.codeTime-1
+                    });
+                }else{
+                    this.setState({
+                        disabled_getCode:false,
+                    });
+                    clearInterval(timer);
+                }
+            }, 1000);
+    }
+    /////////////////////////////////////////////////找回密码显示方法的小心机/////////////////////////////////////////////////
+    //显示找回密码
+    showForget=()=>{
+        this.setState({
+            display_ChangeSuccess:'none',
+            display_Change:'none',
+            display_Head:'none',
+            display_Forget:'block',
+            display_Login:'none',
+        });
+    }
+    //更改密码页面
+    showChangePwd=()=>{
+        this.setState({
+            display_ChangeSuccess:'none',
+            display_Change:'block',
+            display_Head:'none',
+            display_Forget:'none',
+            display_Login:'none',
+        });
+    }
+    //修改成功页面
+    showChangeSuccess=()=>{
+        this.setState({
+            display_ChangeSuccess:'block',
+            display_Change:'none',
+            display_Head:'none',
+            display_Forget:'none',
+            display_Login:'none',
+        });
+    }
+    //返回登陆页面
+    showLogin=()=>{
+        this.setState({
+            display_ChangeSuccess:'none',
+            display_Change:'none',
+            display_Head:'none',
+            display_Forget:'none',
+            display_Login:'block',
+        });
+    }
+
+    /////////////////////////////////////////////////登陆/////////////////////////////////////////////////
+    //登陆与加载
+    enterLoading = () => {
+        this.setState({ loading: true });
+        this.sendAjax();
+        this.overLoading();
     }
     //点击登陆后旋转2秒
     overLoading = () => {
         setInterval(() => {this.setState({ loading: false })}, 2000);
+    }
+    /////////////////////////////////////////////////头部栏/////////////////////////////////////////////////
+    //修改用户名显示
+    nameChange=(e)=>{
+        this.setState({ name : e })
+    }
+    //退出登陆
+    loginOut=()=>{
+        this.setState({
+            display_Head:'none',
+            display_Forget:'none',
+            display_Menu:'none',
+            display_Login:'block',
+            name:"请先登陆",
+        });
+    }
+    /////////////////////////////////////////////////三个fetch请求/////////////////////////////////////////////////
+    //发送验证码请求
+    getPhoneCode = () =>{
+
+        const phone=this.state.phone;//this.state.username;
+        const url="http://39.106.56.132:8080/IMeeting/pwdCode?phone="+phone;
+        if(phone===""){
+            message.warning("手机号不能为空！");
+        }else{
+            fetch(url, {
+                method: "POST",
+                //type:"post",
+                //url:"http://39.106.56.132:8080/userinfo/tologin",
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json;charset=utf-8",
+                },
+                body: JSON.stringify({}),
+            }).then(function (res) {//function (res) {} 和 res => {}效果一致
+                return res.json()
+            }).then(json => {
+                // get result
+                const data = json;
+                 // console.log(data);
+                if(data.status===true){
+                    message.success("请求发送成功！");
+                    this.setState({
+                        pwd_code:data.data,
+                        disabled_getCode:true,
+                        codeTime:60,
+                    },this.codeTime);
+
+                }else if(!data.status){
+                    message.error("手机号码不正确！");
+                }
+
+            }).catch(function (e) {
+                console.log("fetch fail");
+                alert('系统错误');
+            });
+
+        }
+    }
+    //修改密码
+    changePwd = () =>{
+        const phone=this.state.phone;//this.state.username;
+        const password=this.state.password;
+        const url="http://39.106.56.132:8080/IMeeting/forgetPwd?phone="+phone+"&password="+password;
+        fetch(url, {
+            method: "POST",
+            //type:"post",
+            //url:"http://39.106.56.132:8080/userinfo/tologin",
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json;charset=utf-8",
+            },
+            body: JSON.stringify({}),
+        }).then(function (res) {//function (res) {} 和 res => {}效果一致
+            return res.json()
+        }).then(json => {
+            // get result
+            const data = json;
+            console.log(data);
+            if(data.status===true){
+                message.success("密码修改成功！");
+                this.showChangeSuccess();
+            }else{
+                message.error("非法的密码修改！");
+            }
+
+        }).catch(function (e) {
+            console.log("fetch fail");
+            alert('系统错误');
+        });
+
+
     }
     //发送登陆请求
     sendAjax = () =>{
         //POST方式,IP为本机IP
         const username=this.state.username;//this.state.username;
         const password=this.state.password;//this.state.password;
+        const url="http://39.106.56.132:8080/IMeeting/login?username="+username+"&password="+password;
         if(username===""||password===""){
             message.warning("用户名或密码不能为空！");
         }else{
-            fetch("http://39.106.56.132:8080/userinfo/tologin", {
+            fetch(url, {
 
                 method: "POST",
                 //type:"post",
@@ -68,15 +269,15 @@ class App extends Component {
                 // get result
                 const data = json;
                 console.log(data);
-                if(data.message==="登陆成功"){
+                if(data.status===true){
                     this.nameChange(data.data.name);
-                    message.success(data.message);
+                    message.success("登陆成功！");
                     this.setState({
                         display_Head:'block',
                         display_Menu:'block',
                         display_Login:'none',
                     });
-                }else if(data.message==="账号密码有误"){
+                }else if(data.status===false){
                     message.error("用户名或密码错误！");
                 }else {
                     message.error("未知错误");
@@ -90,34 +291,7 @@ class App extends Component {
         }
 
     }
-    //修改用户名显示
-    nameChange=(e)=>{
-        this.setState({ name : e })
-    }
-    //退出登陆
-    loginOut=()=>{
-        this.setState({
-            display_Head:'none',
-            display_Forget:'none',
-            display_Menu:'none',
-            display_Login:'block',
-            name:"请先登陆",
-        });
-    }
-    //登陆与加载
-    enterLoading = () => {
-        this.setState({ loading: true });
-        this.sendAjax();
-        this.overLoading();
-    }
-    //username被修改
-    usernameChange=(e)=>{
-        this.setState({ username : e.target.value })
-    }
-    //password被修改
-    passwordChange=(e)=>{
-        this.setState({ password : e.target.value })
-    }
+    /////////////////////////////////////////////////侧边栏/////////////////////////////////////////////////
     //改变模式
     changeMode=(msg)=> {
         if(msg==="管理员模式"){
@@ -147,22 +321,8 @@ class App extends Component {
             });
         }
     }
-    //显示找回密码
-    showForget=()=>{
-        this.setState({
-            display_Head:'none',
-            display_Forget:'block',
-            display_Login:'none',
-        });
-    }
-    //
-    showLogin=()=>{
-        this.setState({
-            display_Head:'none',
-            display_Forget:'none',
-            display_Login:'block',
-        });
-    }
+
+    /////////////////////////////////////////////////主函数/////////////////////////////////////////////////
     render() {
         return (
             <div className="App">
@@ -172,7 +332,7 @@ class App extends Component {
                         <Head changeMode = {(msg) => this.changeMode(msg)} loginOut = {() => this.loginOut()} name={this.state.name} ></Head>
                     </Layout.Header>
                     <Layout>
-                        {/************************************左边菜单栏************************************/}
+                        {/*****************************************左边菜单栏*****************************************/}
                         <Layout.Sider trigger={null} collapsible collapsed={this.state.collapsed} style={{color: '#fff',backgroundColor:'#fff',display:this.state.display_Menu}}>
                             <Menu className='leftSider' mode={this.state.menu_mode} theme='light' style={{color: '#000',backgroundColor:'#ffffff'}}>
                                 {/*<Menu.Item style={{display:this.state.display_name}}>*/}
@@ -247,8 +407,9 @@ class App extends Component {
                             </Menu>
                         </Layout.Sider>
 
-                        {/************************************核心页面************************************/}
+                        {/*****************************************核心页面*****************************************/}
                         <Layout.Content className='contentLayout'>
+                            {/*************************************登陆与找回密码**************************************/}
                             {/*登陆*/}
                             <Card title="登陆" className={"loginCard"} style={{ width: 600,display:this.state.display_Login }}>
                                 <Input type='' placeholder='用户名' onKeyUp={this.usernameChange}></Input>
@@ -261,19 +422,43 @@ class App extends Component {
                             </Card>
                             {/*找回密码*/}
                             <Card title="找回密码" className={"forgetCard"} style={{ width: 600,display:this.state.display_Forget }}>
-                                <Steps progressDot current={1}>
-                                    <Steps.Step title="第一步" description="This " />
-                                    <Steps.Step title="第二步" description="This " />
-                                    <Steps.Step title="第三步" description="This " />
+                                <Steps style={{ width: '440px'}} current={0}>
+                                    <Steps.Step style={{ margin:0}} title="第一步" description="获取验证码" />
+                                    <Steps.Step style={{ margin:0}} title="第二步" description="修改密码" />
+                                    <Steps.Step style={{ marginLeft:30}} title="第三步" description="修改成功" />
                                 </Steps>
-                                <Input type='' placeholder='手机号' onKeyUp={this.passwordChange}></Input>
                                 <br/>
+                                <Input type='' placeholder='手机号' onKeyUp={this.phoneChange}></Input>
                                 <br/>
-                                <Input type='password' placeholder='密码' onKeyUp={this.passwordChange}></Input>
-                                <Button className={'headBtn1'} type='default' onClick={this.showLogin}>返回登陆</Button>
-                                <Button className={'headBtn1'} type='default' onClick={this.showLogin}>获取验证码</Button>
-                                <Input type='' className={'headBtn2'} placeholder='输入验证码'  onClick={this.enterLoading} ></Input>
+                                <Input type='' className='phoneCodeInput' placeholder='输入验证码' onKeyUp={this.phoneCodeChange}></Input>
+                                <Button className='forgetBtn2' type='default' disabled={this.state.disabled_getCode} onClick={this.getPhoneCode}>{this.state.codeTime>0?"请"+this.state.codeTime+"秒后再试":"获取验证码"}</Button>
+                                <Button className='forgetBtn1' type='default' onClick={this.showLogin}>返回登陆</Button>
+                                <Button className='forgetBtn1' type='primary' onClick={this.compareCode}>下一步</Button>
                             </Card>
+                            {/*修改密码*/}
+                            <Card title="找回密码" className={"forgetCard"} style={{ width: 600,display:this.state.display_Change }}>
+                                <Steps style={{ width: '440px'}} current={1}>
+                                    <Steps.Step style={{ margin:0}} title="第一步" description="获取验证码" />
+                                    <Steps.Step style={{ margin:0}} title="第二步" description="修改密码" />
+                                    <Steps.Step style={{ marginLeft:30}} title="第三步" description="修改成功" />
+                                </Steps>
+                                <br/>
+                                <Input type='' placeholder='输入新密码' onKeyUp={this.passwordChange}></Input>
+                                <br/><br/>
+                                <Input type='' placeholder='再次输入密码' onKeyUp={this.newPasswordChange}></Input>
+                                <Button className='forgetBtn1' type='default' onClick={this.showLogin}>返回登陆</Button>
+                                <Button className='forgetBtn1' type='primary' onClick={this.comparePassword}>修改密码</Button>
+                            </Card>
+                            {/*修改成功*/}
+                            <Card title="找回密码" className={"forgetCard"} style={{ width: 600,display:this.state.display_ChangeSuccess }}>
+                                <Steps style={{ width: '440px'}} current={2}>
+                                    <Steps.Step style={{ margin:0}} title="第一步" description="获取验证码" />
+                                    <Steps.Step style={{ margin:0}} title="第二步" description="修改密码" />
+                                    <Steps.Step style={{ marginLeft:30}} title="第三步" description="修改成功,返回登陆" />
+                                </Steps>
+                                <Button className='forgetBtn1' type='primary' onClick={this.showLogin}>返回登陆</Button>
+                            </Card>
+                            {/*************************************页面路由**************************************/}
                             {/*登陆后内部页面链接*/}
                             <Route path={"/book/address"} component={B_O_Add} />
                             <Route path={"/book/time"} component={B_O_Time} />
@@ -285,7 +470,7 @@ class App extends Component {
 
                     </Layout>
                         <Layout.Footer>
-                            版权所有 @JGN
+                            版权所有 @虹软-有钱没头发-2018
                         </Layout.Footer>
                 </Layout>
                 {/*<header className="App-header">*/}
@@ -301,15 +486,11 @@ class App extends Component {
             </div>
         );
     }
-
-
-
 }
-
 
 export default App;
 
-
+///////////////////////////////////////////////////头部菜单栏页面/////////////////////////////////////////////////
 class Head extends Component {
 
     constructor(props, context) {
@@ -346,28 +527,36 @@ class Head extends Component {
             visible: false,
         });
     };
+
     //修改用户名显示
     nameChange=(e)=>{
         this.setState({ name : e })
     }
-    //username被修改
-    usernameChange=(e)=>{
-        this.setState({ username : e.target.value })
+
+
+
+    showModal = () => {
+        this.setState({
+            visible: true,
+        });
     }
-    //password被修改
-    passwordChange=(e)=>{
-        this.setState({ password : e.target.value })
+
+    handleOk = (e) => {
+        console.log(e);
+        this.props.loginOut();
+        this.setState({
+            visible: false,
+        });
     }
-    //登陆
-    enterLoading = () => {
-        this.setState({ loading: true });
-        this.sendAjax();
-        this.overLoading();
+
+    handleCancel = (e) => {
+        console.log(e);
+        this.setState({
+            visible: false,
+        });
     }
-    //点击登陆后旋转2秒
-    overLoading = () => {
-        setInterval(() => {this.setState({ loading: false })}, 2000);
-    }
+
+
     //发送登陆请求
     sendAjax = () =>{
         //POST方式,IP为本机IP
@@ -410,26 +599,7 @@ class Head extends Component {
         }
 
     }
-    showModal = () => {
-        this.setState({
-            visible: true,
-        });
-    }
 
-    handleOk = (e) => {
-        console.log(e);
-        this.props.loginOut();
-        this.setState({
-            visible: false,
-        });
-    }
-
-    handleCancel = (e) => {
-        console.log(e);
-        this.setState({
-            visible: false,
-        });
-    }
     //主函数
     render() {
         const loginOut=(<div onClick={this.showDrawer}>{"退出登陆"}</div>);
