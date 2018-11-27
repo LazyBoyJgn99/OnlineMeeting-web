@@ -13,6 +13,7 @@ import '@/css/LoginCard.css';
 import '@/App.css';
 import logo from "@/img/logo/logo1024.png";
 import FindHY from "./pages/user/FindHY";
+import UserInfo from "./pages/user/UserInfo";
 
 class App extends Component {
     constructor(props, context) {
@@ -140,7 +141,6 @@ class App extends Component {
             display_Login:'block',
         });
     }
-
     /////////////////////////////////////////////////登陆/////////////////////////////////////////////////
     //登陆与加载
     enterLoading = () => {
@@ -181,6 +181,7 @@ class App extends Component {
                 //type:"post",
                 //url:"http://39.106.56.132:8080/userinfo/tologin",
                 mode: "cors",
+                credentials:"include",//跨域携带cookie
                 headers: {
                     "Content-Type": "application/json;charset=utf-8",
                 },
@@ -220,6 +221,7 @@ class App extends Component {
             //type:"post",
             //url:"http://39.106.56.132:8080/userinfo/tologin",
             mode: "cors",
+            credentials:"include",//跨域携带cookie
             headers: {
                 "Content-Type": "application/json;charset=utf-8",
             },
@@ -259,6 +261,7 @@ class App extends Component {
                 //type:"post",
                 //url:"http://39.106.56.132:8080/userinfo/tologin",
                 mode: "cors",
+                credentials:"include",//跨域携带cookie
                 headers: {
                     "Content-Type": "application/json;charset=utf-8",
                 },
@@ -321,7 +324,12 @@ class App extends Component {
             });
         }
     }
-
+    //菜单显示与隐藏
+    toggle=()=>{
+        this.setState({
+            collapsed:!this.state.collapsed
+        })
+    }
     /////////////////////////////////////////////////主函数/////////////////////////////////////////////////
     render() {
         return (
@@ -381,27 +389,25 @@ class App extends Component {
                                     <Menu.Item><Link to='/book/address'>查看到会人员信息</Link></Menu.Item>
                                 </Menu.SubMenu>
                                 <Menu.SubMenu  title={<span><Icon type='user'/><span>我的信息</span></span>} style={{display:this.state.display_User}}>
-                                    <Menu.Item><Link to='/book/HY'>我的工作</Link></Menu.Item>
-                                    <Menu.Item><Link to='/book/HY'>密码修改</Link></Menu.Item>
+                                    <Menu.Item><Link to='/user/info'>个人资料</Link></Menu.Item>
                                     <Menu.Item><Link to='/book/HY'>面部信息录入</Link></Menu.Item>
                                 </Menu.SubMenu>
                                 {/*用户预订功能模块*/}
-                                <Menu.SubMenu  title={<span><Icon type='user'/><span>会议管理</span></span>} style={{display:this.state.display_Visitor}}>
+                                <Menu.SubMenu  title={<span><Icon type='tool'/><span>会议管理</span></span>} style={{display:this.state.display_Visitor}}>
                                     <Menu.Item><Link to='/book/time'>预订会议</Link></Menu.Item>
                                     <Menu.Item><Link to='/book/time'>查询会议</Link></Menu.Item>
                                     <Menu.Item><Link to='/book/HY'>我的预订</Link></Menu.Item>
                                     <Menu.Item><Link to='/book/address'>请假审批(可以融入我的预订)</Link></Menu.Item>
                                 </Menu.SubMenu>
-                                <Menu.SubMenu  title={<span><Icon type='user'/><span>我的会议</span></span>} style={{display:this.state.display_Visitor}}>
+                                <Menu.SubMenu  title={<span><Icon type='team'/><span>我的会议</span></span>} style={{display:this.state.display_Visitor}}>
                                     <Menu.Item><Link to='/book/time'>查询会议安排</Link></Menu.Item>
                                     <Menu.Item><Link to='/book/HY'>会议请假</Link></Menu.Item>
                                 </Menu.SubMenu>
-                                <Menu.SubMenu  title={<span><Icon type='user'/><span>会议监控</span></span>} style={{display:this.state.display_Visitor}}>
+                                <Menu.SubMenu  title={<span><Icon type='video-camera'/><span>会议监控</span></span>} style={{display:this.state.display_Visitor}}>
                                     <Menu.Item><Link to='/book/address'>查看到会人员信息</Link></Menu.Item>
                                 </Menu.SubMenu>
                                 <Menu.SubMenu  title={<span><Icon type='user'/><span>我的信息</span></span>} style={{display:this.state.display_Visitor}}>
-                                    <Menu.Item><Link to='/book/HY'>我的工作</Link></Menu.Item>
-                                    <Menu.Item><Link to='/book/HY'>密码修改</Link></Menu.Item>
+                                    <Menu.Item><Link to='/user/info'>个人资料</Link></Menu.Item>
                                     <Menu.Item><Link to='/book/HY'>面部信息录入</Link></Menu.Item>
                                 </Menu.SubMenu>
                             </Menu>
@@ -412,10 +418,10 @@ class App extends Component {
                             {/*************************************登陆与找回密码**************************************/}
                             {/*登陆*/}
                             <Card title="登陆" className={"loginCard"} style={{ width: 600,display:this.state.display_Login }}>
-                                <Input type='' placeholder='用户名' onKeyUp={this.usernameChange}></Input>
+                                <Input prefix={<Icon type='user'/>} type='' placeholder='用户名' onKeyUp={this.usernameChange}></Input>
                                 <br/>
                                 <br/>
-                                <Input type='password' placeholder='密码' onKeyUp={this.passwordChange}></Input>
+                                <Input prefix={<Icon type='lock'/>} type='password' placeholder='密码' onKeyUp={this.passwordChange}></Input>
                                 <Button className={'headBtn1'} type='default' onClick={this.showForget}>忘记密码</Button>
                                 <Button className={'headBtn2'} type='primary' loading={this.state.loading} onClick={this.enterLoading} >登陆</Button>
                                 <Button className={'headBtn3'} type='default' onClick={this.sendAjax}>还没有账号？点击注册</Button>
@@ -464,6 +470,7 @@ class App extends Component {
                             <Route path={"/book/time"} component={B_O_Time} />
                             <Route path={"/book/HY"} component={B_O_HY} />
                             <Route path={"/user/findHY"} component={FindHY} />
+                            <Route path={"/user/info"} component={UserInfo} />
                             <Route path={"/welcome"} component={Welcome} />
 
                         </Layout.Content>
