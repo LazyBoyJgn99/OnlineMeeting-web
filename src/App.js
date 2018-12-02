@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 //import logo from './logo.svg';
 //import ReactDOM from 'react-dom';
-import {Button, Icon, Input, Layout, Menu, message,Select,Card,Popover,Modal,Steps} from 'antd';
+import {Button, Icon, Input, Layout, Menu, message, Select, Card, Popover, Modal, Steps, Col, Row} from 'antd';
 import {BrowserRouter as HashRouter, Route, Link} from 'react-router-dom';
 // import Head from '@/pages/Head';
 import Welcome from '@/pages/Welcome';
@@ -14,8 +14,12 @@ import '@/App.css';
 import logo from "@/img/logo/logo1024.png";
 import FindHY from "./pages/user/FindHY";
 import UserInfo from "./pages/user/UserInfo";
+import Group from "./pages/user/Group";
 
 class App extends Component {
+    componentDidMount(){
+        this.hadLog();
+    }
     constructor(props, context) {
         super(props, context);
         this.state = {
@@ -24,7 +28,7 @@ class App extends Component {
             display_Change:'none',
             display_ChangeSuccess:'none',
             display_Menu:'none',
-            display_Login:'block',
+            display_Login:'none',
             display_GLY:'none',
             display_User:'none',
             display_Visitor:'block',
@@ -142,6 +146,10 @@ class App extends Component {
         });
     }
     /////////////////////////////////////////////////登陆/////////////////////////////////////////////////
+    //注册
+    logUp=()=>{
+        message.warn("对不起，注册系统还未开放，请联系管理员申请账号，谢谢");
+    }
     //登陆与加载
     enterLoading = () => {
         this.setState({ loading: true });
@@ -167,12 +175,13 @@ class App extends Component {
             name:"请先登陆",
         });
     }
-    /////////////////////////////////////////////////三个fetch请求/////////////////////////////////////////////////
+    /////////////////////////////////////////////////4个fetch请求/////////////////////////////////////////////////
     //发送验证码请求
     getPhoneCode = () =>{
 
         const phone=this.state.phone;//this.state.username;
         const url="http://39.106.56.132:8080/IMeeting/pwdCode?phone="+phone;
+        // const url="http://localhost:8080/IMeeting/pwdCode?phone="+phone;
         if(phone===""){
             message.warning("手机号不能为空！");
         }else{
@@ -216,6 +225,7 @@ class App extends Component {
         const phone=this.state.phone;//this.state.username;
         const password=this.state.password;
         const url="http://39.106.56.132:8080/IMeeting/forgetPwd?phone="+phone+"&password="+password;
+        // const url="http://localhost:8080/IMeeting/forgetPwd?phone="+phone+"&password="+password;
         fetch(url, {
             method: "POST",
             //type:"post",
@@ -252,6 +262,7 @@ class App extends Component {
         const username=this.state.username;//this.state.username;
         const password=this.state.password;//this.state.password;
         const url="http://39.106.56.132:8080/IMeeting/login?username="+username+"&password="+password;
+        // const url="http://localhost:8080/IMeeting/login?username="+username+"&password="+password;
         if(username===""||password===""){
             message.warning("用户名或密码不能为空！");
         }else{
@@ -293,6 +304,48 @@ class App extends Component {
 
         }
 
+    }
+    //判断是否已经登陆
+    hadLog = () =>{
+        //POST方式,IP为本机IP
+        // const url="http://localhost:8080/IMeeting/showUserinfo"
+        const url="http://39.106.56.132:8080/IMeeting/showUserinfo"
+        fetch(url, {
+            method: "POST",
+            //type:"post",
+            //url:"http://39.106.56.132:8080/userinfo/tologin",
+            mode: "cors",
+            credentials:"include",
+            headers: {
+                "Content-Type": "application/json;charset=utf-8",
+            },
+            body: JSON.stringify({}),
+        }).then(function (res) {//function (res) {} 和 res => {}效果一致
+            return res.json()
+        }).then(json => {
+            // get result
+            const data = json;
+            console.log(data);
+            if(data.status){
+                this.setState({
+                    display_Head:'block',
+                    display_Menu:'block',
+                    display_Login:'none',
+                    name:data.data.name,
+                },function () {});
+            }else{
+                this.setState({
+                    display_Login:'block',
+                },function () {});
+            }
+        }).catch( e => {
+            console.log("fetch fail");
+            this.setState({
+                display_Head:'none',
+                display_Menu:'none',
+                display_Login:'block',
+            },function () {});
+        });
     }
     /////////////////////////////////////////////////侧边栏/////////////////////////////////////////////////
     //改变模式
@@ -342,7 +395,7 @@ class App extends Component {
                     <Layout>
                         {/*****************************************左边菜单栏*****************************************/}
                         <Layout.Sider trigger={null} collapsible collapsed={this.state.collapsed} style={{color: '#fff',backgroundColor:'#fff',display:this.state.display_Menu}}>
-                            <Menu className='leftSider' mode={this.state.menu_mode} theme='light' style={{color: '#000',backgroundColor:'#ffffff'}}>
+                            <Menu className='leftSider' mode={this.state.menu_mode} theme='light' style={{color: '#000'}}>
                                 {/*<Menu.Item style={{display:this.state.display_name}}>*/}
                                 {/*<span ><Icon type='home'/>Home</span>*/}
                                 {/*<Button className='Siderbtn' onClick={this.display_name.bind(this)} ></Button>*/}
@@ -392,6 +445,9 @@ class App extends Component {
                                     <Menu.Item><Link to='/user/info'>个人资料</Link></Menu.Item>
                                     <Menu.Item><Link to='/book/HY'>面部信息录入</Link></Menu.Item>
                                 </Menu.SubMenu>
+                                <Menu.SubMenu  title={<span><Icon type='tags'/><span>群组管理</span></span>} style={{display:this.state.display_User}}>
+                                    <Menu.Item><Link to='/user/group'>我的群组</Link></Menu.Item>
+                                </Menu.SubMenu>
                                 {/*用户预订功能模块*/}
                                 <Menu.SubMenu  title={<span><Icon type='tool'/><span>会议管理</span></span>} style={{display:this.state.display_Visitor}}>
                                     <Menu.Item><Link to='/book/time'>预订会议</Link></Menu.Item>
@@ -410,28 +466,33 @@ class App extends Component {
                                     <Menu.Item><Link to='/user/info'>个人资料</Link></Menu.Item>
                                     <Menu.Item><Link to='/book/HY'>面部信息录入</Link></Menu.Item>
                                 </Menu.SubMenu>
+                                <Menu.SubMenu  title={<span><Icon type='tags'/><span>群组管理</span></span>} style={{display:this.state.display_Visitor}}>
+                                    <Menu.Item><Link to='/user/group'>我的群组</Link></Menu.Item>
+                                </Menu.SubMenu>
                             </Menu>
                         </Layout.Sider>
 
                         {/*****************************************核心页面*****************************************/}
                         <Layout.Content className='contentLayout'>
                             {/*************************************登陆与找回密码**************************************/}
+                            <Row style={{marginTop:10,borderRadius:10}}>
+                                <Col span={18} offset={3} >
                             {/*登陆*/}
-                            <Card title="登陆" className={"loginCard"} style={{ width: 600,display:this.state.display_Login }}>
+                            <Card title="登陆" className="loginCard" style={{ display:this.state.display_Login }}>
                                 <Input prefix={<Icon type='user'/>} type='' placeholder='用户名' onKeyUp={this.usernameChange}></Input>
                                 <br/>
                                 <br/>
                                 <Input prefix={<Icon type='lock'/>} type='password' placeholder='密码' onKeyUp={this.passwordChange}></Input>
                                 <Button className={'headBtn1'} type='default' onClick={this.showForget}>忘记密码</Button>
                                 <Button className={'headBtn2'} type='primary' loading={this.state.loading} onClick={this.enterLoading} >登陆</Button>
-                                <Button className={'headBtn3'} type='default' onClick={this.sendAjax}>还没有账号？点击注册</Button>
+                                <Button className={'headBtn3'} type='default' onClick={this.logUp}>还没有账号？点击注册</Button>
                             </Card>
                             {/*找回密码*/}
-                            <Card title="找回密码" className={"forgetCard"} style={{ width: 600,display:this.state.display_Forget }}>
-                                <Steps style={{ width: '440px'}} current={0}>
+                            <Card title="找回密码" className={"forgetCard"} style={{display:this.state.display_Forget }}>
+                                <Steps style={{ width: '100%'}} current={0}>
                                     <Steps.Step style={{ margin:0}} title="第一步" description="获取验证码" />
-                                    <Steps.Step style={{ margin:0}} title="第二步" description="修改密码" />
-                                    <Steps.Step style={{ marginLeft:30}} title="第三步" description="修改成功" />
+                                    <Steps.Step style={{ margin:0,marginRight:30}} title="第二步" description="修改密码" />
+                                    <Steps.Step style={{ margin:0}} title="第三步" description="修改成功" />
                                 </Steps>
                                 <br/>
                                 <Input type='' placeholder='手机号' onKeyUp={this.phoneChange}></Input>
@@ -442,11 +503,11 @@ class App extends Component {
                                 <Button className='forgetBtn1' type='primary' onClick={this.compareCode}>下一步</Button>
                             </Card>
                             {/*修改密码*/}
-                            <Card title="找回密码" className={"forgetCard"} style={{ width: 600,display:this.state.display_Change }}>
+                            <Card title="找回密码" className={"forgetCard"} style={{ display:this.state.display_Change }}>
                                 <Steps style={{ width: '440px'}} current={1}>
                                     <Steps.Step style={{ margin:0}} title="第一步" description="获取验证码" />
-                                    <Steps.Step style={{ margin:0}} title="第二步" description="修改密码" />
-                                    <Steps.Step style={{ marginLeft:30}} title="第三步" description="修改成功" />
+                                    <Steps.Step style={{ margin:0,marginRight:30}} title="第二步" description="修改密码" />
+                                    <Steps.Step style={{ margin:0}} title="第三步" description="修改成功" />
                                 </Steps>
                                 <br/>
                                 <Input type='' placeholder='输入新密码' onKeyUp={this.passwordChange}></Input>
@@ -456,22 +517,28 @@ class App extends Component {
                                 <Button className='forgetBtn1' type='primary' onClick={this.comparePassword}>修改密码</Button>
                             </Card>
                             {/*修改成功*/}
-                            <Card title="找回密码" className={"forgetCard"} style={{ width: 600,display:this.state.display_ChangeSuccess }}>
+                            <Card title="找回密码" className={"forgetCard"} style={{ display:this.state.display_ChangeSuccess }}>
                                 <Steps style={{ width: '440px'}} current={2}>
                                     <Steps.Step style={{ margin:0}} title="第一步" description="获取验证码" />
-                                    <Steps.Step style={{ margin:0}} title="第二步" description="修改密码" />
-                                    <Steps.Step style={{ marginLeft:30}} title="第三步" description="修改成功,返回登陆" />
+                                    <Steps.Step style={{ margin:0,marginRight:30}} title="第二步" description="修改密码" />
+                                    <Steps.Step style={{ margin:0}} title="第三步" description="修改成功,返回登陆" />
                                 </Steps>
                                 <Button className='forgetBtn1' type='primary' onClick={this.showLogin}>返回登陆</Button>
                             </Card>
+                                </Col>
+                            </Row>
                             {/*************************************页面路由**************************************/}
                             {/*登陆后内部页面链接*/}
-                            <Route path={"/book/address"} component={B_O_Add} />
-                            <Route path={"/book/time"} component={B_O_Time} />
-                            <Route path={"/book/HY"} component={B_O_HY} />
-                            <Route path={"/user/findHY"} component={FindHY} />
-                            <Route path={"/user/info"} component={UserInfo} />
-                            <Route path={"/welcome"} component={Welcome} />
+                            <div style={{display:this.state.display_Head}}>
+                                <Route path={"/book/address"} component={B_O_Add} />
+                                <Route path={"/book/time"} component={B_O_Time} />
+                                <Route path={"/book/HY"} component={B_O_HY} />
+                                <Route path={"/user/group"} component={Group} />
+                                <Route path={"/user/findHY"} component={FindHY} />
+                                <Route path={"/user/info"} component={UserInfo} />
+                                <Route path={"/welcome"} component={Welcome} />
+                            </div>
+
 
                         </Layout.Content>
 
@@ -554,6 +621,7 @@ class Head extends Component {
         this.setState({
             visible: false,
         });
+        this.logout();
     }
 
     handleCancel = (e) => {
@@ -563,7 +631,39 @@ class Head extends Component {
         });
     }
 
+    //发送退出登陆请求
+    logout = () =>{
+        //POST方式,IP为本机IP
+        const url="http://39.106.56.132:8080/IMeeting/logout"
+        // const url="http://localhost:8080/IMeeting/logout"
+        fetch(url, {
+            method: "POST",
+            //type:"post",
+            //url:"http://39.106.56.132:8080/userinfo/tologin",
+            mode: "cors",
+            credentials:"include",
+            headers: {
+                "Content-Type": "application/json;charset=utf-8",
+            },
+            body: JSON.stringify({}),
+        }).then(function (res) {//function (res) {} 和 res => {}效果一致
+            return res.json()
+        }).then(json => {
+            // get result
+            const data = json;
+            console.log(data);
+            if(data.status){
+                message.success("安全退出！");
+            }else {
+                message.error("未知错误");
+            }
 
+        }).catch(function (e) {
+            console.log("fetch fail");
+            alert('系统错误');
+        });
+
+    }
     //发送登陆请求
     sendAjax = () =>{
         //POST方式,IP为本机IP
@@ -631,10 +731,11 @@ class Head extends Component {
                 {/*退出登录*/}
                 <Popover title="" content={loginOut} >
                     <Button className={'headBtn1'} type="primary" >{this.props.name}</Button>
-                </Popover>,
-
-                <Button className={'headBtn1'} type='primary' onClick={this.loginRole}><Icon type="ellipsis" /></Button>
-                <Input className={'searchText'} suffix={<Icon type="search"  />} />
+                </Popover>
+                {/*。。。按钮*/}
+                {/*<Button className={'headBtn1'} type='primary' onClick={this.loginRole}><Icon type="ellipsis" /></Button>*/}
+                {/*搜索框*/}
+                {/*<Input className={'searchText'} suffix={<Icon type="search"  />} />*/}
                 {/*抽屉式登陆页面*/}
                 {/*<Drawer title="用户登录" placement="right" onClose={this.onClose} visible={this.state.visible}>*/}
                     {/*<p>用户</p>*/}
