@@ -318,6 +318,7 @@ class App extends Component {
             credentials:"include",
             headers: {
                 "Content-Type": "application/json;charset=utf-8",
+                "Access-Control-Allow-Origin": "http://39.106.56.132:8082",
             },
             body: JSON.stringify({}),
         }).then(function (res) {//function (res) {} 和 res => {}效果一致
