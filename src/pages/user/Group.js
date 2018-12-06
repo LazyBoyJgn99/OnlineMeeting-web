@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import {Button, Card, Col, Row, Icon, Drawer, Input, Tree, message} from "antd";
+import {Button, Card, Col, Row, Icon, Drawer, Input, Tree} from "antd";
+
 
 class Group extends Component {
     componentDidMount(){
@@ -10,7 +11,12 @@ class Group extends Component {
         childrenDrawer: false,
         display_showUser:'none',
         groupList:[],
-        userList: []
+        userList: [],
+        groupUsers:[],
+        treeData: [],
+        expandedKeys: ["1"],
+        searchValue: '',
+        groupName:'',
     };
 
     /////////////////////////////////////////////////抽屉/////////////////////////////////////////////////
@@ -41,8 +47,8 @@ class Group extends Component {
     /////////////////////////////////////////////////请求/////////////////////////////////////////////////
     //查看用户及其部门
     showUser = () =>{
-        // const url="http://localhost:8080/IMeeting/group/showUser";
-        const url="http://39.106.56.132:8080/IMeeting/group/showUser";
+        const url="http://localhost:8080/IMeeting/group/showUser";
+        // const url="http://39.106.56.132:8080/IMeeting/group/showUser";
         fetch(url, {
             method: "POST",
             //type:"post",
@@ -75,11 +81,110 @@ class Group extends Component {
             console.log("fetch fail");
             alert('系统错误');
         });
+    }
+    //查看用户及其部门
+    saveGroup = () =>{
+        let name=this.state.groupName;
+        let idList=[];
+        this.state.groupUsers.map((item)=>{
+            idList.push(item[1].id);
+        })
+        idList="["+idList+"]";
+        const url="http://localhost:8080/IMeeting/group/saveGroup?name="+name+"?group="+idList;
 
+        // const url="http://39.106.56.132:8080/IMeesting/group/showUser";
+        fetch(url, {
+            method: "POST",
+            //type:"post",
+            //url:"http://39.106.56.132:8080/userinfo/tologin",
+            mode: "cors",
+            credentials:"include",//跨域携带cookie
+            headers: {
+                "Content-Type": "application/json;charset=utf-8",
+            },
+            body: JSON.stringify({data:{name:name,group:idList}}),
+        }).then(function (res) {//function (res) {} 和 res => {}效果一致
+            return res.json()
+        }).then(json => {
+            // get result
+            const data = json;
 
+        }).catch(function (e) {
+            console.log("fetch fail");
+            alert('系统错误');
+        });
     }
 
+
+    /////////////////////////////////////////////////获取树内的信息/////////////////////////////////////////////////
+    //输出选中
+    loadTree = (e) =>{
+        console.log(e);
+        console.log(this.state.treeData);
+
+    }
+    //选中
+    onCheck =(checked,info)=>{
+        let checkedKey=[...checked,...info.halfCheckedKeys];
+        this.setState({
+            treeData:checkedKey
+        },function () {
+            const groupUsers=[];
+            this.state.treeData.map((item)=>{
+                let n=item.substr(2,1);
+                let m=item.substr(4,1);
+                console.log(n+" "+m);
+                if(n!==""&&m!==""){
+                    groupUsers.push([this.state.groupList[n],this.state.userList[n][m]])
+                }
+                return null;
+            });
+            console.log(groupUsers);
+            this.setState({
+                groupUsers:groupUsers
+            })
+        })
+
+    }
+    //查找
+    onSearch=(e)=>{
+        console.log(e)
+        const value = e;
+        const expandedKeys=["1"];
+        this.state.groupList.map((item, i)=>{
+            if (item.name.indexOf(value) > -1) {
+                expandedKeys.push(1+"-"+i);
+            }
+            this.state.userList[i].map((item2)=>{
+                if (item2.name.indexOf(value) > -1) {
+                    expandedKeys.push(1+"-"+i);
+                    // expandedKeys.push(1+"-"+i+"-"+j);
+                }
+                return null;
+            })
+            return null;
+        });
+        console.log(expandedKeys)
+        this.setState({
+            expandedKeys:expandedKeys,
+            searchValue: value,
+        });
+    }
+    //展开树
+    onExpand = (expandedKeys) => {
+        console.log(expandedKeys);
+        this.setState({
+            expandedKeys:expandedKeys,
+        });
+    }
+    /////////////////////////////////////////////////创建群组/////////////////////////////////////////////////
+    changeGroupName =(e)=>{
+        this.setState({
+            groupName:e.target.value,
+        });
+    }
     render() {
+
         return (
             <div >
                 <Row style={{marginTop:10,borderRadius:10}}>
@@ -100,7 +205,7 @@ class Group extends Component {
                     </Col>
                 </Row>
                 <Drawer
-                    title={<div><Button href="#" type={"primary"} onClick={this.showDrawer}>创建群组</Button></div>}
+                    title={<div><Button href="#" type={"primary"} onClick={this.saveGroup}>创建群组</Button></div>}
                     placement="right"
                     closable={false}
                     onClose={this.onClose}
@@ -110,17 +215,30 @@ class Group extends Component {
                     <h2>群组名称</h2>
                     <Input
                         placeholder="input search text"
+                        value={this.state.groupName}
+                        onChange={this.changeGroupName}
                         style={{  }}
                     />
                     <p></p>
-                    <h2>成员</h2>
-                    {/*//////////////////此处存放成员列表//////////////////此处存放成员列表//////////////////此处存放成员列表//////////////////此处存放成员列表*/}
-
+                    <h2>成员<div style={{color:"#666666"}}>{this.state.groupUsers.length+" "} <Icon type="user"/></div></h2>
                     <Button
                         onClick={this.showChildrenDrawer}
-                        style={{ width:"100%",height:36 }}
+                        style={{ width:"100%",height:36,color:'#ff5500'}}
                         type="dashed"
-                    />
+                    >修改成员</Button>
+                    {/*//////////////////此处存放成员列表//////////////////此处存放成员列表//////////////////此处存放成员列表//////////////////此处存放成员列表*/}
+                    {
+                        this.state.groupUsers.map((item,i)=>{
+                            return(
+                                <Button
+                                    style={{ width:"100%",height:36}}
+                                    type="default"
+                                    key={i}
+                                ><h4>{item[0].name+"---"+item[1].name}</h4></Button>
+                            )
+                        })
+                    }
+
 
                 </Drawer>
                 <Drawer
@@ -133,8 +251,9 @@ class Group extends Component {
                 >
                     <Input.Search
                         placeholder="input search text"
-                        onSearch={value => console.log(value)}
+                        onSearch={this.onSearch}
                         style={{display:this.display_showUser}}
+
                     />
                     <p></p>
                     <p> 群组成员</p>
@@ -143,21 +262,44 @@ class Group extends Component {
                         defaultExpandAll
                         onSelect={this.onSelect}
                         onCheck={this.onCheck}
+                        // loadData={this.loadTree}
+                        onExpand={this.onExpand}
+                        expandedKeys={this.state.expandedKeys}
                     >
 
                         <Tree.TreeNode title="所有部门" key={1}>
                         {
                             this.state.groupList.map((item, i)=>{
+                                const index = item.name.indexOf(this.state.searchValue);
+                                const beforeStr = item.name.substr(0, index);
+                                const afterStr = item.name.substr(index + this.state.searchValue.length);
+                                const title = index > -1 ? (
+                                    <span>
+                                        {beforeStr}
+                                        <span style={{ color: '#ff5500' }}>{this.state.searchValue}</span>
+                                        {afterStr}
+                                     </span>
+                                ) : <span>{item.name}</span>;
                                 return(
                                     <Tree.TreeNode
-                                        title={item.name}
-                                        key={2+"-"+i}
+                                        title={title}
+                                        key={1+"-"+i}
                                     >{
                                         this.state.userList[i].map((item2, j)=>{
+                                            const index = item2.name.indexOf(this.state.searchValue);
+                                            const beforeStr = item2.name.substr(0, index);
+                                            const afterStr = item2.name.substr(index + this.state.searchValue.length);
+                                            const title = index > -1 ? (
+                                                <span>
+                                                    {beforeStr}
+                                                    <span style={{ color: '#ff5500' }}>{this.state.searchValue}</span>
+                                                    {afterStr}
+                                                </span>
+                                            ) : <span>{item2.name}</span>;
                                             return(
                                                 <Tree.TreeNode
-                                                    title={item2.name}
-                                                    key={2+"-"+i+"-"+j}
+                                                    title={title}
+                                                    key={1+"-"+i+"-"+j}
                                                 >
                                                 </Tree.TreeNode>
                                             )
@@ -171,6 +313,7 @@ class Group extends Component {
 
                     </Tree>
 
+                    <Button onClick={this.loadTree}></Button>
                 </Drawer>
             </div>
         );

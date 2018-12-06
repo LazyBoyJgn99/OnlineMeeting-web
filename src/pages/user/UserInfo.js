@@ -108,8 +108,8 @@ class UserInfo extends Component {
     /////////////////////////////////////////////////请求/////////////////////////////////////////////////
     //get用户信息
     getUserInfo=()=>{
-        // const url1="http://localhost:8080/IMeeting/showUserinfo";
-        const url1="http://39.106.56.132:8080/IMeeting/showUserinfo";
+        const url1="http://localhost:8080/IMeeting/showUserinfo";
+        // const url1="http://39.106.56.132:8080/IMeeting/showUserinfo";
         fetch(url1, {
             method: "POST",
             //type:"post",
@@ -136,8 +136,8 @@ class UserInfo extends Component {
     }
     //修改
     updateResume=()=>{
-        // const url1="http://localhost:8080/IMeeting/updateResume?resume="+this.state.resume;
-        const url1="http://39.106.56.132:8080/IMeeting/updateResume?resume="+this.state.resume;
+        const url1="http://localhost:8080/IMeeting/updateResume?resume="+this.state.resume;
+        // const url1="http://39.106.56.132:8080/IMeeting/updateResume?resume="+this.state.resume;
         fetch(url1, {
             method: "POST",
             //type:"post",
@@ -167,8 +167,8 @@ class UserInfo extends Component {
     getPhoneCode = () =>{
 
         const phone=this.state.newPhone;//this.state.username;
-        const url="http://39.106.56.132:8080/IMeeting/getCode?phone="+phone;
-        // const url="http://localhost:8080/IMeeting/getCode?phone="+phone;
+        // const url="http://39.106.56.132:8080/IMeeting/getCode?phone="+phone;
+        const url="http://localhost:8080/IMeeting/getCode?phone="+phone;
         if(phone===""){
             message.warning("手机号不能为空！");
         }else{
@@ -210,8 +210,8 @@ class UserInfo extends Component {
     changePhone = () =>{
 
     const phone=this.state.newPhone;//this.state.username;
-    // const url="http://localhost:8080/IMeeting/recordPhone?phone="+phone;
-    const url="http://39.106.56.132:8080/IMeeting/recordPhone?phone="+phone;
+    const url="http://localhost:8080/IMeeting/recordPhone?phone="+phone;
+    // const url="http://39.106.56.132:8080/IMeeting/recordPhone?phone="+phone;
         fetch(url, {
             method: "POST",
             //type:"post",

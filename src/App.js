@@ -180,8 +180,8 @@ class App extends Component {
     getPhoneCode = () =>{
 
         const phone=this.state.phone;//this.state.username;
-        const url="http://39.106.56.132:8080/IMeeting/pwdCode?phone="+phone;
-        // const url="http://localhost:8080/IMeeting/pwdCode?phone="+phone;
+        // const url="http://39.106.56.132:8080/IMeeting/pwdCode?phone="+phone;
+        const url="http://localhost:8080/IMeeting/pwdCode?phone="+phone;
         if(phone===""){
             message.warning("手机号不能为空！");
         }else{
@@ -224,8 +224,8 @@ class App extends Component {
     changePwd = () =>{
         const phone=this.state.phone;//this.state.username;
         const password=this.state.password;
-        const url="http://39.106.56.132:8080/IMeeting/forgetPwd?phone="+phone+"&password="+password;
-        // const url="http://localhost:8080/IMeeting/forgetPwd?phone="+phone+"&password="+password;
+        // const url="http://39.106.56.132:8080/IMeeting/forgetPwd?phone="+phone+"&password="+password;
+        const url="http://localhost:8080/IMeeting/forgetPwd?phone="+phone+"&password="+password;
         fetch(url, {
             method: "POST",
             //type:"post",
@@ -261,8 +261,8 @@ class App extends Component {
         //POST方式,IP为本机IP
         const username=this.state.username;//this.state.username;
         const password=this.state.password;//this.state.password;
-        const url="http://39.106.56.132:8080/IMeeting/login?username="+username+"&password="+password;
-        // const url="http://localhost:8080/IMeeting/login?username="+username+"&password="+password;
+        // const url="http://39.106.56.132:8080/IMeeting/login?username="+username+"&password="+password;
+        const url="http://localhost:8080/IMeeting/login?username="+username+"&password="+password;
         if(username===""||password===""){
             message.warning("用户名或密码不能为空！");
         }else{
@@ -308,8 +308,8 @@ class App extends Component {
     //判断是否已经登陆
     hadLog = () =>{
         //POST方式,IP为本机IP
-        // const url="http://localhost:8080/IMeeting/showUserinfo"
-        const url="http://39.106.56.132:8080/IMeeting/showUserinfo"
+        const url="http://localhost:8080/IMeeting/showUserinfo"
+        // const url="http://39.106.56.132:8080/IMeeting/showUserinfo"
         fetch(url, {
             method: "POST",
             //type:"post",
@@ -635,8 +635,8 @@ class Head extends Component {
     //发送退出登陆请求
     logout = () =>{
         //POST方式,IP为本机IP
-        const url="http://39.106.56.132:8080/IMeeting/logout"
-        // const url="http://localhost:8080/IMeeting/logout"
+        // const url="http://39.106.56.132:8080/IMeeting/logout"
+        const url="http://localhost:8080/IMeeting/logout"
         fetch(url, {
             method: "POST",
             //type:"post",
@@ -663,48 +663,6 @@ class Head extends Component {
             console.log("fetch fail");
             alert('系统错误');
         });
-
-    }
-    //发送登陆请求
-    sendAjax = () =>{
-        //POST方式,IP为本机IP
-        const username=this.state.username;//this.state.username;
-        const password=this.state.password;//this.state.password;
-        if(username===""||password===""){
-            message.warning("用户名或密码不能为空！");
-        }else{
-            fetch("http://39.106.56.132:8080/userinfo/tologin", {
-
-                method: "POST",
-                //type:"post",
-                //url:"http://39.106.56.132:8080/userinfo/tologin",
-                mode: "cors",
-                headers: {
-                    "Content-Type": "application/json;charset=utf-8",
-                },
-                body: JSON.stringify({username:username,password:password}),
-            }).then(function (res) {//function (res) {} 和 res => {}效果一致
-                return res.json()
-            }).then(json => {
-                // get result
-                const data = json;
-                console.log(data);
-                if(data.message==="登陆成功"){
-                    this.nameChange(data.data.name);
-                    message.success(data.message);
-                    this.onClose();
-                }else if(data.message==="账号密码有误"){
-                    message.error("用户名或密码错误！");
-                }else {
-                    message.error("未知错误");
-                }
-
-            }).catch(function (e) {
-                console.log("fetch fail");
-                alert('系统错误');
-            });
-
-        }
 
     }
 

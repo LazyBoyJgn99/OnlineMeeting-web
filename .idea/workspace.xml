@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a8202be4-1918-4a7f-a577-c46990fa86e5" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/user/Group.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/user/Group.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/user/UserInfo.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/user/UserInfo.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -85,14 +86,14 @@
         <counts>
           <entry key="css" value="147" />
           <entry key="html" value="10" />
-          <entry key="js" value="5881" />
+          <entry key="js" value="7367" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="CSS" value="147" />
           <entry key="HTML" value="10" />
-          <entry key="JavaScript" value="5881" />
+          <entry key="JavaScript" value="7367" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -115,11 +116,17 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/App.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="220">
-              <caret line="268" column="24" lean-forward="true" selection-start-line="268" selection-start-column="24" selection-end-line="268" selection-end-column="24" />
+            <state relative-caret-position="249">
+              <caret line="353" column="26" lean-forward="true" selection-start-line="353" selection-start-column="26" selection-end-line="353" selection-end-column="26" />
+              <folding>
+                <element signature="e#5561#7031#0" />
+                <element signature="e#7064#8254#0" />
+                <element signature="e#8288#10081#0" />
+                <element signature="e#10115#11491#0" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -142,13 +149,21 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/pages/user/Group.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="152">
-              <caret line="28" column="32" selection-start-line="28" selection-start-column="32" selection-end-line="28" selection-end-column="32" />
+            <state relative-caret-position="232">
+              <caret line="95" column="20" lean-forward="true" selection-start-line="95" selection-start-column="20" selection-end-line="95" selection-end-column="20" />
               <folding>
                 <element signature="e#0#41#0" expanded="true" />
+                <element signature="e#493#563#0" />
+                <element signature="e#586#657#0" />
+                <element signature="e#691#814#0" />
+                <element signature="e#851#929#0" />
+                <element signature="e#2542#3038#0" />
+                <element signature="e#2551#2667#0" />
+                <element signature="e#3022#3740#0" />
+                <element signature="e#3691#3797#0" />
               </folding>
             </state>
           </provider>
@@ -157,10 +172,12 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/pages/user/UserInfo.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="265">
-              <caret line="197" selection-start-line="197" selection-end-line="197" />
+            <state relative-caret-position="223">
+              <caret line="56" column="34" lean-forward="true" selection-start-line="56" selection-start-column="34" selection-end-line="56" selection-end-column="34" />
               <folding>
                 <element signature="e#0#41#0" expanded="true" />
+                <element signature="e#3873#4841#0" />
+                <element signature="e#4880#6351#0" />
               </folding>
             </state>
           </provider>
@@ -250,9 +267,9 @@
         <option value="$PROJECT_DIR$/public/index.html" />
         <option value="$PROJECT_DIR$/src/css/LoginCard.css" />
         <option value="$PROJECT_DIR$/src/App.css" />
+        <option value="$PROJECT_DIR$/src/App.js" />
         <option value="$PROJECT_DIR$/src/pages/user/UserInfo.js" />
         <option value="$PROJECT_DIR$/src/pages/user/Group.js" />
-        <option value="$PROJECT_DIR$/src/App.js" />
       </list>
     </option>
   </component>
@@ -273,9 +290,9 @@
     </packageJsonPaths>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="380" />
+    <option name="x" value="706" />
     <option name="y" value="23" />
-    <option name="width" value="1300" />
+    <option name="width" value="974" />
     <option name="height" value="963" />
   </component>
   <component name="ProjectView">
@@ -382,17 +399,18 @@
       <workItem from="1543634338465" duration="29384000" />
       <workItem from="1543742377183" duration="716000" />
       <workItem from="1543744978125" duration="2569000" />
-      <workItem from="1543816552440" duration="4276000" />
+      <workItem from="1543816552440" duration="23717000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="140453000" />
+    <option name="totallyTimeSpent" value="159894000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="380" y="23" width="1300" height="963" extended-state="0" />
+    <frame x="706" y="23" width="974" height="963" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17904612" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24029382" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="npm" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
@@ -407,7 +425,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="TypeScript" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.33180252" />
+      <window_info anchor="bottom" id="Terminal" order="11" visible="true" weight="0.33180252" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -587,26 +605,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/pages/user/UserInfo.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="265">
-          <caret line="197" selection-start-line="197" selection-end-line="197" />
-          <folding>
-            <element signature="e#0#41#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/pages/user/Group.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="28" column="32" selection-start-line="28" selection-start-column="32" selection-end-line="28" selection-end-column="32" />
-          <folding>
-            <element signature="e#0#41#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/package.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="330">
@@ -616,8 +614,44 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/App.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="268" column="24" lean-forward="true" selection-start-line="268" selection-start-column="24" selection-end-line="268" selection-end-column="24" />
+        <state relative-caret-position="249">
+          <caret line="353" column="26" lean-forward="true" selection-start-line="353" selection-start-column="26" selection-end-line="353" selection-end-column="26" />
+          <folding>
+            <element signature="e#5561#7031#0" />
+            <element signature="e#7064#8254#0" />
+            <element signature="e#8288#10081#0" />
+            <element signature="e#10115#11491#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/pages/user/UserInfo.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="223">
+          <caret line="56" column="34" lean-forward="true" selection-start-line="56" selection-start-column="34" selection-end-line="56" selection-end-column="34" />
+          <folding>
+            <element signature="e#0#41#0" expanded="true" />
+            <element signature="e#3873#4841#0" />
+            <element signature="e#4880#6351#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/pages/user/Group.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="232">
+          <caret line="95" column="20" lean-forward="true" selection-start-line="95" selection-start-column="20" selection-end-line="95" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#41#0" expanded="true" />
+            <element signature="e#493#563#0" />
+            <element signature="e#586#657#0" />
+            <element signature="e#691#814#0" />
+            <element signature="e#851#929#0" />
+            <element signature="e#2542#3038#0" />
+            <element signature="e#2551#2667#0" />
+            <element signature="e#3022#3740#0" />
+            <element signature="e#3691#3797#0" />
+          </folding>
         </state>
       </provider>
     </entry>
