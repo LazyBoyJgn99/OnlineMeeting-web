@@ -8,6 +8,7 @@ import Welcome from '@/pages/Welcome';
 import B_O_Add from '@/pages/booking/BookingOfAdd';
 import B_O_HY from '@/pages/booking/BookingOfHY';
 import B_O_Time from '@/pages/booking/BookingOfTime';
+import golbal from '@/golbal'
 import '@/css/Layout.css';
 import '@/css/LoginCard.css';
 import '@/App.css';
@@ -181,7 +182,7 @@ class App extends Component {
 
         const phone=this.state.phone;//this.state.username;
         // const url="http://39.106.56.132:8080/IMeeting/pwdCode?phone="+phone;
-        const url="http://localhost:8080/IMeeting/pwdCode?phone="+phone;
+        const url=golbal.localhostUrl+"IMeeting/pwdCode?phone="+phone;
         if(phone===""){
             message.warning("手机号不能为空！");
         }else{
@@ -225,7 +226,7 @@ class App extends Component {
         const phone=this.state.phone;//this.state.username;
         const password=this.state.password;
         // const url="http://39.106.56.132:8080/IMeeting/forgetPwd?phone="+phone+"&password="+password;
-        const url="http://localhost:8080/IMeeting/forgetPwd?phone="+phone+"&password="+password;
+        const url=golbal.localhostUrl+"IMeeting/forgetPwd?phone="+phone+"&password="+password;
         fetch(url, {
             method: "POST",
             //type:"post",
@@ -262,7 +263,7 @@ class App extends Component {
         const username=this.state.username;//this.state.username;
         const password=this.state.password;//this.state.password;
         // const url="http://39.106.56.132:8080/IMeeting/login?username="+username+"&password="+password;
-        const url="http://localhost:8080/IMeeting/login?username="+username+"&password="+password;
+        const url=golbal.localhostUrl+"IMeeting/login?username="+username+"&password="+password;
         if(username===""||password===""){
             message.warning("用户名或密码不能为空！");
         }else{
@@ -308,7 +309,7 @@ class App extends Component {
     //判断是否已经登陆
     hadLog = () =>{
         //POST方式,IP为本机IP
-        const url="http://localhost:8080/IMeeting/showUserinfo"
+        const url=golbal.localhostUrl+"IMeeting/showUserinfo"
         // const url="http://39.106.56.132:8080/IMeeting/showUserinfo"
         fetch(url, {
             method: "POST",
@@ -636,7 +637,7 @@ class Head extends Component {
     logout = () =>{
         //POST方式,IP为本机IP
         // const url="http://39.106.56.132:8080/IMeeting/logout"
-        const url="http://localhost:8080/IMeeting/logout"
+        const url=golbal.localhostUrl+"IMeeting/logout"
         fetch(url, {
             method: "POST",
             //type:"post",

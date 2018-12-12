@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {Button, Card, Col, Row, Icon, Drawer, Input, Tree} from "antd";
-
+import golbal from '@/golbal';
 
 class Group extends Component {
     componentDidMount(){
@@ -47,7 +47,7 @@ class Group extends Component {
     /////////////////////////////////////////////////请求/////////////////////////////////////////////////
     //查看用户及其部门
     showUser = () =>{
-        const url="http://localhost:8080/IMeeting/group/showUser";
+        const url=golbal.localhostUrl+"IMeeting/group/showUser";
         // const url="http://39.106.56.132:8080/IMeeting/group/showUser";
         fetch(url, {
             method: "POST",
@@ -91,7 +91,7 @@ class Group extends Component {
             return null;
         })
         idList="["+idList+"]";
-        const url="http://localhost:8080/IMeeting/group/saveGroup?name="+name+"?group="+idList;
+        const url=golbal.localhostUrl+"IMeeting/group/saveGroup?name="+name+"?group="+idList;
 
         // const url="http://39.106.56.132:8080/IMeesting/group/showUser";
         fetch(url, {
