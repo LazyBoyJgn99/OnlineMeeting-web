@@ -88,6 +88,7 @@ class Group extends Component {
         let idList=[];
         this.state.groupUsers.map((item)=>{
             idList.push(item[1].id);
+            return null;
         })
         idList="["+idList+"]";
         const url="http://localhost:8080/IMeeting/group/saveGroup?name="+name+"?group="+idList;
@@ -108,7 +109,7 @@ class Group extends Component {
         }).then(json => {
             // get result
             const data = json;
-
+            console.log(data);
         }).catch(function (e) {
             console.log("fetch fail");
             alert('系统错误');
