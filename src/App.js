@@ -297,7 +297,6 @@ class App extends Component {
                 }else {
                     message.error("未知错误");
                 }
-
             }).catch(function (e) {
                 console.log("fetch fail");
                 alert('系统错误');
@@ -478,7 +477,7 @@ class App extends Component {
                         <Layout.Content className='contentLayout'>
                             {/*************************************登陆与找回密码**************************************/}
                             <Row style={{marginTop:10,borderRadius:10}}>
-                                <Col span={18} offset={3} >
+                                <Col span={10} offset={7} >
                             {/*登陆*/}
                             <Card title="登陆" className="loginCard" style={{ display:this.state.display_Login }}>
                                 <Input prefix={<Icon type='user'/>} type='' placeholder='用户名' onKeyUp={this.usernameChange}></Input>
@@ -559,6 +558,7 @@ class App extends Component {
 
                 {/*</header>*/}
                 </HashRouter>
+
             </div>
         );
     }
