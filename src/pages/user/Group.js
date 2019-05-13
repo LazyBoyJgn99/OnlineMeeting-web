@@ -59,6 +59,11 @@ class Group extends Component {
         this.setState({
             newOrUpdate:true,
             visible: true,
+            groupUsers:[],
+            treeData: [],
+            selectedKeys:[],
+            searchValue: '',
+            groupName:'',
         });
     };
 
@@ -235,7 +240,12 @@ class Group extends Component {
             let selectedKeys=[];
             data.data[1].map((item,i)=>{
                 console.log(item)
-                selectedKeys.push(1+"-"+item.groupId+"-"+item.userId);
+                this.state.groupList.map((item2,j)=>{
+                    if (item.groupId===item2.id){
+                        selectedKeys.push(1+"-"+(j+1)+"-"+item.userId);
+                    }
+                    return null;
+                });
                 return null;
             })
 
@@ -247,8 +257,9 @@ class Group extends Component {
                 const groupUsers=[];
                 // console.log(this.state.treeData)
                 let n=0;
-                this.state.treeData.map((item)=>{
-                    let nums=item.split("-");
+                this.state.treeData.map((item0)=>{
+                    console.log(item0)
+                    let nums=item0.split("-");
                     let m="";
                     // console.log(nums)
                     if(nums[1] !== "0"){
@@ -257,9 +268,9 @@ class Group extends Component {
                      //console.log(n+"-"+m);
                     // console.log(this.state.userList);
                     this.state.userList.map((item,j)=>{
-                        this.state.userList[j].map((item, i) => {
+                        this.state.userList[j].map((item2, i) => {
                             // console.log(item.id+"=="+nums[2])
-                            if (""+item.id === ""+nums[2]) {
+                            if (""+item2.id === ""+nums[2]) {
                                 m = i;
                                 // console.log(m+"="+i);
                                 return m = i;
@@ -362,8 +373,10 @@ class Group extends Component {
                 })
                 // console.log(n+"--"+m);
                 if(n!==0&&m!==""){
-                    // console.log(this.state.groupList[n-1]);
-                    // console.log(this.state.userList[n-1]);
+                    console.log(n-1)
+                    console.log(this.state.groupList[n-1]);
+                    console.log(this.state.groupList[6]);
+                    console.log(this.state.userList[n-1]);
                     return groupUsers.push([this.state.groupList[n-1],this.state.userList[n-1][parseInt(m)]])
                 }
                 return null;
@@ -527,7 +540,7 @@ class Group extends Component {
                                 return(
                                     <Tree.TreeNode
                                         title={title}
-                                        key={1+"-"+item.id}
+                                        key={1+"-"+(i+1)}
                                     >{
                                         this.state.userList[i].map((item2, j)=>{
                                             const index = item2.name.indexOf(this.state.searchValue);
@@ -543,7 +556,7 @@ class Group extends Component {
                                             return(
                                                 <Tree.TreeNode
                                                     title={title}
-                                                    key={1+"-"+item.id+"-"+item2.id}
+                                                    key={1+"-"+(i+1)+"-"+item2.id}
                                                 >
                                                 </Tree.TreeNode>
                                             )
@@ -556,8 +569,6 @@ class Group extends Component {
                         </Tree.TreeNode>
 
                     </Tree>
-
-                    <Button onClick={this.loadTree}></Button>
                 </Drawer>
 
                 <Modal

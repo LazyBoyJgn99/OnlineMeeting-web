@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {message,Input,Modal,Button,Card,Row,Col} from "antd";
 import golbal from '@/golbal';
+import ChangePassword from "@/pages/user/tool/ChangePassword";
 class UserInfo extends Component {
     componentDidMount(){
         this.getUserInfo();
@@ -254,7 +255,20 @@ class UserInfo extends Component {
                     <Col span={18} offset={3} >
                         <Card
                             title={<h1 style={{float:'left',marginBottom:-10}}>个人资料</h1>}
-                            extra={<Button href="#" type={"primary"} onClick={this.updateResume}>保存</Button>}
+                            extra={
+                                <div style={{width:200}} >
+                                    <Row>
+                                        <Col span={12}>
+                                            <ChangePassword />
+
+                                        </Col>
+                                        <Col span={12}>
+                                            <Button href="#" type={"primary"} onClick={this.updateResume} >保存</Button>
+
+                                        </Col>
+                                    </Row>
+                                </div>
+                            }
                             // style={{ width: 300 }}
                         >
                             <h3 style={{float:'left',marginTop:10}}>姓名</h3>

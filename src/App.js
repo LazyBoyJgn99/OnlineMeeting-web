@@ -3,12 +3,16 @@ import React, { Component } from 'react';
 //import ReactDOM from 'react-dom';
 import {Button, Icon, Input, Layout, Menu, message, Select, Card, Popover, Modal, Steps, Col, Row} from 'antd';
 import {BrowserRouter as HashRouter, Route, Link} from 'react-router-dom';
+// import {createHashHistory} from 'history';
 // import Head from '@/pages/Head';
 import Welcome from '@/pages/Welcome';
 import B_O_Add from '@/pages/booking/BookingOfAdd';
 import B_O_HY from '@/pages/booking/BookingOfHY';
 import B_O_Time from '@/pages/booking/BookingOfTime';
-import golbal from '@/golbal'
+import Meeting_Book from '@/pages/meeting/BookMeeting';
+import Meeting_Mine from '@/pages/meeting/SearchMeeting';
+import Meeting_Manage from '@/pages/manage/MeetingManage';
+import golbal from '@/golbal';
 import '@/css/Layout.css';
 import '@/css/LoginCard.css';
 import '@/App.css';
@@ -16,14 +20,43 @@ import logo from "@/img/logo/logo1024.png";
 import FindHY from "./pages/user/FindHY";
 import UserInfo from "./pages/user/UserInfo";
 import Group from "./pages/user/Group";
+import MyJoinMeeting from "./pages/myMeeting/MyJoinMeeting";
+import RoleManage from "./pages/manage/RoleManage";
+import MyMeetLeave from "./pages/myMeeting/MyMeetLeave";
+import DepartManage from "./pages/manage/DepartManage";
+import EquipManage from "./pages/manage/EquipManage";
+import MeetRoomManage from "./pages/manage/MeetRoomManage";
+import MeetParaManage from "./pages/manage/MeetParaManage";
+import PersonManage from "./pages/manage/PersonManage";
+import FaceManage from "./pages/manage/FaceManage";
+import JoinPersonManage from "./pages/manage/JoinPersonManage";
+import MeetInfoManage from "./pages/manage/MeetInfoManage";
+import GGDemo1 from "./pages/graph/GGDemo1";
+import GGIndex from "./pages/graph/GGIndex";
+// import ViserDemo1 from "./pages/graph/ViserDemo1";
+import BizDemo from "./pages/graph/BizDemo";
+import ManageIndex from "./pages/manage/ManageIndex";
+import EquipRepairManage from "./pages/manage/EquipRepairManage";
+import OthersFaceManage from "./pages/myMeeting/OthersFaceManage";
+import DoorManage from "./pages/manage/DoorManage";
+import FileManage from "./pages/manage/FileManage";
+import WeekMeetManage from "./pages/manage/WeekMeetManage";
+import DetailManage from "./pages/manage/DetailManage";
+import WeekMeeting from "./pages/meeting/WeekMeeting";
+import DoorApply from "./pages/others/DoorApply";
+import EquipRepair from "./pages/others/EquipRepair";
+import BookMeetingManager from "./pages/manage/BookMeetingManager";
 
 class App extends Component {
-    componentDidMount(){
+    componentWillMount(){
         this.hadLog();
+        this.toManager();
     }
     constructor(props, context) {
         super(props, context);
         this.state = {
+            mode:"用户模式",
+            GLY_Mode:false,
             display_Head:'none',
             display_Forget:'none',
             display_Change:'none',
@@ -37,7 +70,7 @@ class App extends Component {
             disabled_getCode:false,
             menu_mode:'inline',//vertical
             width: '200px',
-            collapsed:true,
+            collapsed:false,//左侧菜单收缩
             username: "",
             password: "",
             new_password:"",
@@ -48,9 +81,13 @@ class App extends Component {
             visible: false,
             name:"请先登陆",
             loading: false,
+            roleList:[],
+            loginFlag:0,
         }
     }
+
     /////////////////////////////////////////////////Input输入的及时改变/////////////////////////////////////////////////
+
     //username被修改
     usernameChange=(e)=>{
         this.setState({ username : e.target.value })
@@ -169,6 +206,7 @@ class App extends Component {
     //退出登陆
     loginOut=()=>{
         this.setState({
+            GLY_Mode:false,
             display_Head:'none',
             display_Forget:'none',
             display_Menu:'none',
@@ -254,8 +292,36 @@ class App extends Component {
             console.log("fetch fail");
             alert('系统错误');
         });
-
-
+    }
+    //获取管理员权限列表
+    toManager = () =>{
+        // const url="http://39.106.56.132:8080/IMeeting/forgetPwd?phone="+phone+"&password="+password;
+        const url=golbal.localhostUrl+"IMeeting/manager/toManager";
+        fetch(url, {
+            method: "POST",
+            //type:"post",
+            //url:"http://39.106.56.132:8080/userinfo/tologin",
+            mode: "cors",
+            credentials:"include",//跨域携带cookie
+            headers: {
+                "Content-Type": "application/json;charset=utf-8",
+            },
+            body: JSON.stringify({}),
+        }).then(function (res) {//function (res) {} 和 res => {}效果一致
+            return res.json()
+        }).then(json => {
+            // get result
+            const data = json;
+            console.log(data);
+            if(data.data!==undefined){
+                this.setState({
+                    roleList:data.data,
+                })
+            }
+        }).catch(function (e) {
+            console.log("fetch fail");
+            alert('系统错误');
+        });
     }
     //发送登陆请求
     sendAjax = () =>{
@@ -287,11 +353,23 @@ class App extends Component {
                 if(data.status===true){
                     this.nameChange(data.data.name);
                     message.success("登陆成功！");
+                    this.toManager();
                     this.setState({
+                        mode:"用户模式",
                         display_Head:'block',
                         display_Menu:'block',
                         display_Login:'none',
                     });
+                    this.setState({
+                        loginFlag:this.state.loginFlag+1
+                    })
+                    if(data.message==="no"){
+                        this.changeMode("用户模式")
+                    }else{
+                        this.changeMode("管理员模式")
+                        this.changeMode("用户模式");
+                    }
+                    document.getElementById("toIndex").click();//返回首页的Link
                 }else if(data.status===false){
                     message.error("用户名或密码错误！");
                 }else {
@@ -307,6 +385,7 @@ class App extends Component {
     }
     //判断是否已经登陆
     hadLog = () =>{
+        console.log("判断是否已经登陆")
         //POST方式,IP为本机IP
         const url=golbal.localhostUrl+"IMeeting/showUserinfo"
         // const url="http://39.106.56.132:8080/IMeeting/showUserinfo"
@@ -328,7 +407,13 @@ class App extends Component {
             const data = json;
             console.log(data);
             if(data.status){
+                console.log(data.data.roleID);
+                if(data.data.roleId!==null){
+                    this.changeMode("管理员模式");
+                    this.changeMode("用户模式");
+                }
                 this.setState({
+                    mode:"用户模式",
                     display_Head:'block',
                     display_Menu:'block',
                     display_Login:'none',
@@ -341,30 +426,43 @@ class App extends Component {
             }
         }).catch( e => {
             console.log("fetch fail");
+            // hashHistory.push('跳转路径');
+            // createHashHistory().replace(golbal.webUrl)//失败例子1
+            document.getElementById("toIndex").click();//返回首页的Link
+            if(this.state.display_Head==='block'){
+                alert("登陆超时，请重新登陆");
+                // window.location.href = golbal.webUrl;//失败例子2
+            }
             this.setState({
+                mode:"用户模式",
                 display_Head:'none',
                 display_Menu:'none',
                 display_Login:'block',
             },function () {});
         });
     }
+
     /////////////////////////////////////////////////侧边栏/////////////////////////////////////////////////
     //改变模式
     changeMode=(msg)=> {
         if(msg==="管理员模式"){
             this.setState({
+                mode:"管理员模式",
+                GLY_Mode:true,
                 display_GLY:'block',
                 display_User:'none',
                 display_Visitor:'none',
             });
         }else if(msg==="游客模式"){
             this.setState({
+                mode:"游客模式",
                 display_GLY:'none',
                 display_User:'none',
                 display_Visitor:'block',
             });
         }else if(msg==="用户模式"){
             this.setState({
+                mode:"用户模式",
                 display_GLY:'none',
                 display_User:'block',
                 display_Visitor:'none',
@@ -391,12 +489,28 @@ class App extends Component {
                 <HashRouter>
                 <Layout>
                     <Layout.Header className={'Head'} style={{display:this.state.display_Head}} >
-                        <Head changeMode = {(msg) => this.changeMode(msg)} loginOut = {() => this.loginOut()} name={this.state.name} ></Head>
+                        <Head changeMode = {(msg) => this.changeMode(msg)} loginOut = {() => this.loginOut()} name={this.state.name} GLY_Mode={this.state.GLY_Mode} mode={this.state.mode}></Head>
                     </Layout.Header>
                     <Layout>
                         {/*****************************************左边菜单栏*****************************************/}
-                        <Layout.Sider trigger={null} collapsible collapsed={this.state.collapsed} style={{color: '#fff',backgroundColor:'#fff',display:this.state.display_Menu}}>
-                            <Menu className='leftSider' mode={this.state.menu_mode} theme='light' style={{color: '#000'}}>
+                        <Layout.Sider
+                            trigger={null}
+                            collapsible
+                            collapsed={this.state.collapsed}
+                            style={{
+                                color: '#fff',
+                                backgroundColor:'#fff',
+                                display:this.state.display_Menu
+                            }}
+                        >
+                            <Menu
+                                className='leftSider'
+                                mode={this.state.menu_mode}
+                                theme='light'
+                                style={{
+                                    color: '#000'
+                                }}
+                            >
                                 {/*<Menu.Item style={{display:this.state.display_name}}>*/}
                                 {/*<span ><Icon type='home'/>Home</span>*/}
                                 {/*<Button className='Siderbtn' onClick={this.display_name.bind(this)} ></Button>*/}
@@ -407,68 +521,194 @@ class App extends Component {
                                     <span >菜单</span>
                                 </Menu.Item>
                                 {/*管理员功能模块*/}
-                                <Menu.SubMenu  title={<span><Icon type='tool'/><span>用户管理</span></span>} style={{display:this.state.display_GLY}}>
-                                    <Menu.Item><Link to='/book/time'>部门类型管理</Link></Menu.Item>
-                                    <Menu.Item><Link to='/book/HY'>角色类型管理</Link></Menu.Item>
-                                    <Menu.Item><Link to='/book/address'>用户信息</Link></Menu.Item>
+                                <Menu.SubMenu  title={<span><Icon type="cluster" /><span>用户管理</span></span>} style={{display:this.state.display_GLY}}>
+                                    {
+                                        this.state.roleList.map((item)=>{
+                                            if(item.menuName==="部门管理"){
+                                                return (
+                                                    <Menu.Item key={item.id}><Link to='/manage/depart'>部门管理</Link></Menu.Item>
+                                                )
+                                            }else{
+                                                return null;
+                                            }
+                                        })
+                                    }
+                                    {
+                                        this.state.roleList.map((item)=>{
+                                            if(item.menuName==="角色管理"){
+                                                return (
+                                                    <Menu.Item key={item.id}><Link to='/manage/role'>角色管理</Link></Menu.Item>
+                                                )
+                                            }else{
+                                                return null;
+                                            }
+                                        })
+                                    }
+                                    {
+                                        this.state.roleList.map((item)=>{
+                                            if(item.menuName==="员工管理"){
+                                                return (
+                                                    <Menu.Item key={item.id}><Link to='/manage/person'>员工管理</Link></Menu.Item>
+                                                )
+                                            }else{
+                                                return null;
+                                            }
+                                        })
+                                    }
+                                    {/*<Menu.Item><Link to='/manage/position'>职位管理</Link></Menu.Item>*/}
+                                    {/*<Menu.Item><Link to='/manage/depart'>部门管理</Link></Menu.Item>*/}
+                                    {/*<Menu.Item><Link to='/manage/role'>角色管理</Link></Menu.Item>*/}
+                                    {/*<Menu.Item><Link to='/manage/person'>员工管理</Link></Menu.Item>*/}
                                 </Menu.SubMenu>
-                                <Menu.SubMenu  title={<span><Icon type='team'/><span>会议室管理</span></span>} style={{display:this.state.display_GLY}}>
-                                    <Menu.Item><Link to='/book/time'>设备信息管理</Link></Menu.Item>
-                                    <Menu.Item><Link to='/book/HY'>会议室信息</Link></Menu.Item>
-                                    <Menu.Item><Link to='/book/address'>会议室状态</Link></Menu.Item>
+                                <Menu.SubMenu  title={<span><Icon type="bank" /><span>会议室管理</span></span>} style={{display:this.state.display_GLY}}>
+                                    {
+                                        this.state.roleList.map((item)=>{
+                                            if(item.menuName==="设备管理"){
+                                                return (
+                                                    <Menu.Item key={item.id}><Link to='/manage/equip'>设备管理</Link></Menu.Item>
+                                                )
+                                            }else{
+                                                return null;
+                                            }
+                                        })
+                                    }
+                                    {
+                                        this.state.roleList.map((item)=>{
+                                            if(item.menuName==="会议室管理"){
+                                                return (
+                                                    <Menu.Item key={item.id}><Link to='/manage/meetRoom'>会议室管理</Link></Menu.Item>
+                                                )
+                                            }else{
+                                                return null;
+                                            }
+                                        })
+                                    }
+                                    {
+                                        this.state.roleList.map((item)=>{
+                                            if(item.menuName==="参数管理"){
+                                                return (
+                                                    <Menu.Item key={item.id}><Link to='/manage/meetRoomPara'>参数管理</Link></Menu.Item>
+                                                )
+                                            }else{
+                                                return null;
+                                            }
+                                        })
+                                    }
+                                    <Menu.Item ><Link to='/manage/equipRepair'>设备报修管理</Link></Menu.Item>
+                                    <Menu.Item ><Link to='/manage/door'>门禁权限管理</Link></Menu.Item>
+                                    <Menu.Item ><Link to='/manage/file'>文件管理</Link></Menu.Item>
+
+                                    {/*<Menu.Item><Link to='/manage/equip'>设备管理</Link></Menu.Item>*/}
+                                    {/*<Menu.Item><Link to='/manage/meetRoom'>会议室管理</Link></Menu.Item>*/}
+                                    {/*<Menu.Item><Link to='/manage/meetRoomPara'>参数管理</Link></Menu.Item>*/}
                                 </Menu.SubMenu>
                                 <Menu.SubMenu  title={<span><Icon type='smile'/><span>面部信息管理</span></span>} style={{display:this.state.display_GLY}}>
-                                    <Menu.Item><Link to='/book/time'>会议参数管理</Link></Menu.Item>
-                                    <Menu.Item><Link to='/book/HY'>会议信息</Link></Menu.Item>
-                                    <Menu.Item><Link to='/book/address'>会议审核</Link></Menu.Item>
-                                    <Menu.Item><Link to='/book/address'>进入记录</Link></Menu.Item>
+                                    {
+                                        this.state.roleList.map((item)=>{
+                                            if(item.menuName==="人脸管理"){
+                                                return (
+                                                    <Menu.Item key={item.id}><Link to='/manage/face'>人脸管理</Link></Menu.Item>
+                                                )
+                                            }else{
+                                                return null;
+                                            }
+                                        })
+                                    }
+                                    {/*<Menu.Item><Link to='/manage/role'>人脸录入</Link></Menu.Item>*/}
+                                    {/*<Menu.Item><Link to='/manage/face'>人脸管理</Link></Menu.Item>*/}
                                 </Menu.SubMenu>
-                                <Menu.SubMenu  title={<span><Icon type="appstore"/><span>其它</span></span>} style={{display:this.state.display_GLY}}>
-                                    <Menu.Item><Link to='/book/HY'>日志管理</Link></Menu.Item>
+                                <Menu.SubMenu  title={<span><Icon type='team'/><span>会议管理</span></span>} style={{display:this.state.display_GLY}}>
+                                    {
+                                        this.state.roleList.map((item)=>{
+                                            if(item.menuName==="会议管理"){
+                                                return (
+                                                    <Menu.Item key={item.id}><Link to='/manage/meetInfo'>会议管理</Link></Menu.Item>
+                                                )
+                                            }else{
+                                                return null;
+                                            }
+                                        })
+                                    }
+                                    <Menu.Item ><Link to='/manage/weekMeet'>每周例会管理</Link></Menu.Item>
+                                    <Menu.Item ><Link to='/manage/book'>预定会议</Link></Menu.Item>
+                                    {/*<Menu.Item><Link to='/manage/role'>会议审核</Link></Menu.Item>*/}
+                                    {/*<Menu.Item><Link to='/manage/joinPerson'>进出记录</Link></Menu.Item>*/}
+                                    {/*<Menu.Item><Link to='/manage/meetInfo'>会议记录</Link></Menu.Item>*/}
+                                </Menu.SubMenu>
+                                {/*<Menu.SubMenu  title={<span><Icon type="appstore"/><span>其它</span></span>} style={{display:this.state.display_GLY}}>*/}
+                                <Menu.SubMenu  title={<span><Icon type="bar-chart" /><span>数据分析</span></span>} style={{display:this.state.display_GLY}}>
+                                    {
+                                        this.state.roleList.map((item)=>{
+                                            if(item.menuName==="参数管理"){
+                                                return (
+                                                    <Menu.Item key={item.id}><Link to='/manage/para'>数据分析</Link></Menu.Item>
+                                                )
+                                            }else{
+                                                return null;
+                                            }
+                                        })
+                                    }
+                                    {/*<Menu.Item><Link to='/book/HY'>日志管理</Link></Menu.Item>*/}
+                                </Menu.SubMenu>
+                                <Menu.SubMenu  title={<span><Icon type='appstore'/><span>其它</span></span>} style={{display:this.state.display_GLY}}>
+                                    <Menu.Item><Link to='/manage/detail'>日志管理</Link></Menu.Item>
                                 </Menu.SubMenu>
                                 {/*开会者预订端功能模块*/}
                                 <Menu.SubMenu  title={<span><Icon type="tool" /><span>会议管理</span></span>} style={{display:this.state.display_User}}>
-                                    <Menu.Item><Link to='/book/time'>预订会议</Link></Menu.Item>
-                                    <Menu.Item><Link to='/user/findHY'>查询会议</Link></Menu.Item>
-                                    <Menu.Item><Link to='/book/HY'>我的预订</Link></Menu.Item>
-                                    <Menu.Item><Link to='/book/address'>请假审批(可以融入我的预订)</Link></Menu.Item>
+                                    <Menu.Item><Link to='/meeting/book'>预订会议</Link></Menu.Item>
+                                    {/*<Menu.Item><Link to='/meeting/search'>查询会议</Link></Menu.Item>*/}
+                                    <Menu.Item><Link to='/meeting/myMeeting'>我的预订</Link></Menu.Item>
+                                    {/*<Menu.Item><Link to='/book/address'>请假审批(可以融入我的预订)</Link></Menu.Item>*/}
+                                    <Menu.Item><Link to='/myMeeting/myMeetLeave'>请假审批</Link></Menu.Item>
+                                    <Menu.Item><Link to='/meeting/weekMeet'>每周例会</Link></Menu.Item>
                                 </Menu.SubMenu>
                                 <Menu.SubMenu  title={<span><Icon type='team'/><span>我的会议</span></span>} style={{display:this.state.display_User}}>
-                                    <Menu.Item><Link to='/book/time'>查询会议安排</Link></Menu.Item>
-                                    <Menu.Item><Link to='/book/HY'>会议请假</Link></Menu.Item>
+                                    <Menu.Item><Link to='/myMeeting/myJoin'>会议安排</Link></Menu.Item>
                                 </Menu.SubMenu>
                                 <Menu.SubMenu  title={<span><Icon type="video-camera" /><span>会议监控</span></span>} style={{display:this.state.display_User}}>
-                                    <Menu.Item><Link to='/book/time'>查看到会人员名单</Link></Menu.Item>
-                                    <Menu.Item><Link to='/book/HY'>查看异常人员</Link></Menu.Item>
-                                    <Menu.Item><Link to='/book/address'>查看到会人员信息</Link></Menu.Item>
+                                    <Menu.Item><Link to='/manage/joinPerson'>签到记录</Link></Menu.Item>
+                                    <Menu.Item><Link to='/manage/othersFace'>异常人员</Link></Menu.Item>
                                 </Menu.SubMenu>
-                                <Menu.SubMenu  title={<span><Icon type='user'/><span>我的信息</span></span>} style={{display:this.state.display_User}}>
-                                    <Menu.Item><Link to='/user/info'>个人资料</Link></Menu.Item>
-                                    <Menu.Item><Link to='/book/HY'>面部信息录入</Link></Menu.Item>
+                                <Menu.SubMenu  title={<span><Icon type='user'/><span>个人中心</span></span>} style={{display:this.state.display_User}}>
+                                    <Menu.Item><Link to='/user/info'>我的资料</Link></Menu.Item>
+                                    <Menu.Item><Link to='/user/'>我的消息</Link></Menu.Item>
+                                    <Menu.Item><Link to='/user/'>我的文件</Link></Menu.Item>
+                                    {/*<Menu.Item><Link to='/book/HY'>面部信息录入</Link></Menu.Item>*/}
                                 </Menu.SubMenu>
                                 <Menu.SubMenu  title={<span><Icon type='tags'/><span>群组管理</span></span>} style={{display:this.state.display_User}}>
                                     <Menu.Item><Link to='/user/group'>我的群组</Link></Menu.Item>
                                 </Menu.SubMenu>
+                                <Menu.SubMenu  title={<span><Icon type='appstore'/><span>其它</span></span>} style={{display:this.state.display_User}}>
+                                    <Menu.Item><Link to='/others/equipRepair'>设备报修</Link></Menu.Item>
+                                    <Menu.Item><Link to='/others/doorApply'>开门申请</Link></Menu.Item>
+                                    <Menu.Item><Link to='/others/'>通讯录</Link></Menu.Item>
+                                </Menu.SubMenu>
                                 {/*用户预订功能模块*/}
                                 <Menu.SubMenu  title={<span><Icon type='tool'/><span>会议管理</span></span>} style={{display:this.state.display_Visitor}}>
-                                    <Menu.Item><Link to='/book/time'>预订会议</Link></Menu.Item>
-                                    <Menu.Item><Link to='/book/time'>查询会议</Link></Menu.Item>
-                                    <Menu.Item><Link to='/book/HY'>我的预订</Link></Menu.Item>
-                                    <Menu.Item><Link to='/book/address'>请假审批(可以融入我的预订)</Link></Menu.Item>
+                                    <Menu.Item><Link to='/meeting/book'>预订会议</Link></Menu.Item>
+                                    {/*<Menu.Item><Link to='/meeting/search'>查询会议</Link></Menu.Item>*/}
+                                    <Menu.Item><Link to='/meeting/myMeeting'>我的预订</Link></Menu.Item>
+                                    {/*<Menu.Item><Link to='/book/address'>请假审批(可以融入我的预订)</Link></Menu.Item>*/}
+                                    <Menu.Item><Link to='/myMeeting/myMeetLeave'>请假审批</Link></Menu.Item>
                                 </Menu.SubMenu>
                                 <Menu.SubMenu  title={<span><Icon type='team'/><span>我的会议</span></span>} style={{display:this.state.display_Visitor}}>
-                                    <Menu.Item><Link to='/book/time'>查询会议安排</Link></Menu.Item>
-                                    <Menu.Item><Link to='/book/HY'>会议请假</Link></Menu.Item>
+                                    <Menu.Item><Link to='/myMeeting/myJoin'>会议安排</Link></Menu.Item>
                                 </Menu.SubMenu>
                                 <Menu.SubMenu  title={<span><Icon type='video-camera'/><span>会议监控</span></span>} style={{display:this.state.display_Visitor}}>
+                                    <Menu.Item><Link to='/manage/joinPerson'>签到记录</Link></Menu.Item>
                                     <Menu.Item><Link to='/book/address'>查看到会人员信息</Link></Menu.Item>
                                 </Menu.SubMenu>
                                 <Menu.SubMenu  title={<span><Icon type='user'/><span>我的信息</span></span>} style={{display:this.state.display_Visitor}}>
                                     <Menu.Item><Link to='/user/info'>个人资料</Link></Menu.Item>
-                                    <Menu.Item><Link to='/book/HY'>面部信息录入</Link></Menu.Item>
+                                    {/*<Menu.Item><Link to='/book/HY'>面部信息录入</Link></Menu.Item>*/}
                                 </Menu.SubMenu>
                                 <Menu.SubMenu  title={<span><Icon type='tags'/><span>群组管理</span></span>} style={{display:this.state.display_Visitor}}>
                                     <Menu.Item><Link to='/user/group'>我的群组</Link></Menu.Item>
+                                </Menu.SubMenu>
+                                <Menu.SubMenu  title={<span><Icon type='appstore'/><span>其它</span></span>} style={{display:this.state.display_Visitor}}>
+                                    <Menu.Item><Link to='/others/equipRepair'>设备报修</Link></Menu.Item>
+                                    <Menu.Item><Link to='/others/doorApply'>开门申请</Link></Menu.Item>
+                                    <Menu.Item><Link to='/others/'>通讯录</Link></Menu.Item>
                                 </Menu.SubMenu>
                             </Menu>
                         </Layout.Sider>
@@ -538,14 +778,51 @@ class App extends Component {
                                 <Route path={"/user/findHY"} component={FindHY} />
                                 <Route path={"/user/info"} component={UserInfo} />
                                 <Route path={"/welcome"} component={Welcome} />
+                                <Route path={"/meeting/book"} component={Meeting_Book} />
+                                <Route path={"/meeting/search"} component={Meeting_Mine} />
+                                <Route path={"/meeting/myMeeting"} component={Meeting_Mine} />
+                                <Route path={"/meeting/weekMeet"} component={WeekMeeting} />
+                                <Route path={"/others/doorApply"} component={DoorApply} />
+                                <Route path={"/others/equipRepair"} component={EquipRepair} />
+                                <Route path={"/manage/book"} component={BookMeetingManager} />
+                                <Route path={"/manage/meeting"} component={Meeting_Manage} />
+                                <Route path={"/manage/role"} component={RoleManage} />
+                                <Route path={"/manage/depart"} component={DepartManage} />
+                                <Route path={"/manage/equip"} component={EquipManage} />
+                                <Route path={"/manage/equipRepair"} component={EquipRepairManage} />
+                                <Route path={"/manage/door"} component={DoorManage} />
+                                <Route path={"/manage/file"} component={FileManage} />
+                                <Route path={"/manage/weekMeet"} component={WeekMeetManage} />
+                                <Route path={"/manage/detail"} component={DetailManage} />
+                                <Route path={"/manage/meetRoom"} component={MeetRoomManage} />
+                                <Route path={"/manage/meetRoomPara"} component={MeetParaManage} />
+                                <Route path={"/manage/person"} component={PersonManage} />
+                                <Route path={"/manage/face"} component={FaceManage} />
+                                <Route path={"/manage/othersFace"} component={OthersFaceManage} />
+                                <Route path={"/manage/joinPerson"} component={JoinPersonManage} />
+                                <Route path={"/manage/meetInfo"} component={MeetInfoManage} />
+                                <Route path={"/manage/para"} component={ManageIndex} />
+                                <Route path={"/myMeeting/myJoin"} component={MyJoinMeeting} />
+                                {/*<Route path={"/graph/demo1"} component={GGDemo1} />*/}
+                                {/*<Route path={"/index2"} component={GGIndex} />*/}
+                                {/*<Route path={"/index1"} component={ViserDemo1} />*/}
+                                <Route path={"/index"}
+                                       render={()=>{
+                                           return <BizDemo
+                                               loginFlag={this.state.loginFlag}
+                                           />
+                                       }}
+                                />
+                                <Route path={"/myMeeting/myMeetLeave"} component={MyMeetLeave} />
+                                {/*隐藏的Link接口*/}
+                                <Link to={"/index"} id="toIndex"/>
                             </div>
-
 
                         </Layout.Content>
 
                     </Layout>
                         <Layout.Footer>
-                            版权所有 @虹软-有钱没头发-2018
+                            版权所有 @虹软-有头发没钱-2019
                         </Layout.Footer>
                 </Layout>
                 {/*<header className="App-header">*/}
@@ -562,8 +839,8 @@ class App extends Component {
             </div>
         );
     }
-}
 
+}
 export default App;
 
 ///////////////////////////////////////////////////头部菜单栏页面/////////////////////////////////////////////////
@@ -578,7 +855,6 @@ class Head extends Component {
             visible: false,
             name:"登陆",
             loading: false,
-
         }
     }
     //模块选择
@@ -589,7 +865,6 @@ class Head extends Component {
     //登陆身份
     loginRole = (msg) => {
         this.props.changeMode(msg);
-
     }
     //弹出登陆框
     showDrawer = () => {
@@ -608,8 +883,6 @@ class Head extends Component {
     nameChange=(e)=>{
         this.setState({ name : e })
     }
-
-
 
     showModal = () => {
         this.setState({
@@ -674,8 +947,8 @@ class Head extends Component {
             <div className={'head'} style={this.props.style}>
                 {/*right*/}
                 {/*<div>{this.props.name}</div>*/}
-                <img src={logo} className="App-logo logo" alt="logo" />
-                <span className={'companyName'}><h2><Link to='/welcome'>我的主页</Link></h2></span>
+                <img src={logo} className="App-logo logo" alt="logo" onClick={function () {}} />
+                <span className={'companyName'}><h2><Link to='/index'>智能会议室管理系统</Link></h2></span>
                 {/*left*/}
                 {/*<Input className={'searchText'} suffix={(*/}
                 {/*<Button className="search-btn"  type="primary">*/}
@@ -683,11 +956,18 @@ class Head extends Component {
                 {/*</Button>*/}
                 {/*)}*/}
                 {/*/>*/}
-                <Select className={'headBtn1'} defaultValue="游客模式" style={{ width: 120 }} onChange={this.handleChange}>
-                    <Select.Option value="游客模式">游客模式</Select.Option>
-                    <Select.Option value="管理员模式">管理员模式</Select.Option>
-                    <Select.Option value="用户模式">用户模式</Select.Option>
-                </Select>
+
+                {/*测试区 登陆模式*/}
+                <div style={this.props.GLY_Mode?{ display: "block" }:{ display: "none" }}>
+                    <Select className={'headBtn1'} defaultValue={this.props.mode} style={{ width: 120 }} onChange={this.handleChange}>
+                        {/*<Select.Option value="游客模式">游客模式</Select.Option>*/}
+                        <Select.Option value="管理员模式">管理员模式</Select.Option>
+                        <Select.Option value="用户模式">用户模式</Select.Option>
+                    </Select>
+                </div>
+
+                {/*测试区 登陆模式*/}
+
                 {/*退出登录*/}
                 <Popover title="" content={loginOut} >
                     <Button className={'headBtn1'} type="primary" >{this.props.name}</Button>
