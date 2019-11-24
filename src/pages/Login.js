@@ -25,7 +25,7 @@ class Login extends Component {
             phone_code:"",
             pwd_code:"!!!",
             visible: false,
-            name:"请先登陆",
+            name:"请先登录",
             loading: false,
         }
     }
@@ -59,7 +59,7 @@ class Login extends Component {
             display_Login:'none',
         });
     }
-    //返回登陆页面
+    //返回登录页面
     showLogin=()=>{
         this.setState({
             display_ChangeSuccess:'none',
@@ -90,13 +90,13 @@ class Login extends Component {
             display_Login:'none',
         });
     }
-    //登陆与加载
+    //登录与加载
     enterLoading = () => {
         this.setState({ loading: true });
         this.sendAjax();
         this.overLoading();
     }
-    //点击登陆后旋转2秒
+    //点击登录后旋转2秒
     overLoading = () => {
         setInterval(() => {this.setState({ loading: false })}, 2000);
     }
@@ -135,7 +135,7 @@ class Login extends Component {
                     <br/>
                     <Input type='' className='phoneCodeInput' placeholder='输入验证码' onKeyUp={this.phoneCodeChange}></Input>
                     <Button className='forgetBtn2' type='default' onClick={this.getPhoneCode}>获取验证码</Button>
-                    <Button className='forgetBtn1' type='default' onClick={this.showLogin}>返回登陆</Button>
+                    <Button className='forgetBtn1' type='default' onClick={this.showLogin}>返回登录</Button>
                     <Button className='forgetBtn1' type='primary' onClick={this.compareCode}>下一步</Button>
                 </Card>
                 {/*修改密码*/}
@@ -149,7 +149,7 @@ class Login extends Component {
                     <Input type='' placeholder='输入新密码' onKeyUp={this.passwordChange}></Input>
                     <br/><br/>
                     <Input type='' placeholder='再次输入密码' onKeyUp={this.newPasswordChange}></Input>
-                    <Button className='forgetBtn1' type='default' onClick={this.showLogin}>返回登陆</Button>
+                    <Button className='forgetBtn1' type='default' onClick={this.showLogin}>返回登录</Button>
                     <Button className='forgetBtn1' type='primary' onClick={this.comparePassword}>修改密码</Button>
                 </Card>
                 {/*修改成功*/}
@@ -157,9 +157,9 @@ class Login extends Component {
                     <Steps style={{ width: '440px'}} current={2}>
                         <Steps.Step style={{ margin:0}} title="第一步" description="获取验证码" />
                         <Steps.Step style={{ margin:0}} title="第二步" description="修改密码" />
-                        <Steps.Step style={{ marginLeft:30}} title="第三步" description="修改成功,返回登陆" />
+                        <Steps.Step style={{ marginLeft:30}} title="第三步" description="修改成功,返回登录" />
                     </Steps>
-                    <Button className='forgetBtn1' type='primary' onClick={this.showLogin}>返回登陆</Button>
+                    <Button className='forgetBtn1' type='primary' onClick={this.showLogin}>返回登录</Button>
                 </Card>
             </div>
         );

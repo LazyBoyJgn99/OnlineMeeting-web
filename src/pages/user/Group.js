@@ -446,7 +446,7 @@ class Group extends Component {
                                         <Card key={i}>
                                             <div>
                                                 <Col span={4}>{i+1}</Col>
-                                                <Col span={12}><h2>{item.name}</h2></Col>
+                                                <Col span={12}><h3>{item.name}</h3></Col>
                                                 <Button  size={"large"} type='default' onClick={this.showOneGroup.bind(this,item.id)}><Icon type="edit" /></Button>
                                                 <Button  size={"large"}type='danger' onClick={this.showModal.bind(this,item.id)}><Icon type="delete"></Icon></Button>
                                             </div>

@@ -205,22 +205,27 @@ class BookMeeting extends Component {
     ////////////////////////////////////////////fetch接口//////////////////////////////////////////////////////////////////
     //人工智能搜索结果
     showScreen=()=>{
+        const form = this.formRef.props.form;
         let weight=[]
         let equipList=[]
         this.state.equipList.map((item)=>{
             equipList.push(item.id)
         })
         equipList.map((item1)=>{
-            let k=1
+            let k=0
             this.state.checkEquip.map((item2)=>{
                 if(item1===item2){
-                    k=5
+                    k=1
+                    // return weight.push(k)
                 }
                 return null
             })
             return weight.push(k)
         })
-
+        weight.push(1)
+        console.log("equips",equipList)
+        console.log("weight",weight)
+        console.log("contain",this.state.contain)
         const url=golbal.localhostUrl+"IMeeting/meeting/recommandMeetRoom";
         fetch(url, {
             method: "POST",
@@ -245,6 +250,9 @@ class BookMeeting extends Component {
             })
             this.setState({
                 screenVisible: true,
+            })
+            form.setFieldsValue({
+                dateTime:moment(this.state.searchDate,"YYYY-MM-DD"),
             })
         }).catch(function (e) {
             console.log("fetch fail");
@@ -442,7 +450,9 @@ class BookMeeting extends Component {
                 render:(text)=>{
                     return(
                         <div>
-                            {text.equips.toString()}
+                            {text.meetroomEquips.map((item)=>{
+                                return item.equip.name+"|"
+                            })}
                         </div>
                     )
                 }

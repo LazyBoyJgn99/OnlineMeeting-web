@@ -237,7 +237,7 @@ class OthersFaceManage extends Component {
     }
     //selectAll
     selectAll = () =>{
-        const url=golbal.localhostUrl+"IMeeting/face/selectAll";
+        const url=golbal.localhostUrl+"IMeeting/abnormal/selctMyAbnormal";
         fetch(url, {
             method: "POST",
             mode: "cors",
@@ -271,9 +271,6 @@ class OthersFaceManage extends Component {
                 }
             },{
                 title:"异常人员名称",
-                dataIndex:"name",
-                key:"name",
-                ...this.getColumnSearchProps("name"),
                 render:()=>{
                     return(
                         "陌生人"
@@ -281,17 +278,15 @@ class OthersFaceManage extends Component {
                 }
             },{
                 title:"检测时间",
-                dataIndex:"name",
-                key:"name",
-                render:()=>{
-                    return(
-                        "2019年3月12日 09:"+parseInt(Math.random()*51+10)+":"+parseInt(Math.random()*51+10)
-                    )
+                dataIndex:"time",
+                key:"time",
+                render:(item)=>{
+                    return item
                 }
             },{
-                title:"检测地点",
-                dataIndex:"name",
-                key:"name",
+                title:"会议ID",
+                dataIndex:"meetingId",
+                key:"meetingId",
                 render:()=>{
                     return(
                         "会议室一"
@@ -299,23 +294,13 @@ class OthersFaceManage extends Component {
                 }
             },{
                 title:"图片",
-                dataIndex:"faceAddress",
-                key:"faceAddress",
+                dataIndex:"imgUrl",
+                key:"imgUrl",
                 render:(item,data,i)=>{
                     switch (i) {
-                        case 0:
-                            return(<img style={{ width: 111, height:111 }} src={face1} title={"图片"}/>)
-                        case 1:
-                            return(<img style={{ width: 111, height:111 }} src={face2} title={"图片"}/>)
-                        case 2:
-                            return(<img style={{ width: 111, height:111 }} src={face3} title={"图片"}/>)
-                        case 3:
-                            return(<img style={{ width: 111, height:111 }} src={face4} title={"图片"}/>)
                         default:
                             return(<img style={{ width: 111, height:111 }} src={item} title={"图片"}/>)
-
                     }
-                    return(<img style={{ width: 111, height:111 }} src={face1} title={"图片"}/>)
                 }
             }
             // ,{
@@ -351,7 +336,7 @@ class OthersFaceManage extends Component {
                             title={<h2 style={{float:'left',marginBottom:-3}}>异常人员</h2>}
                             extra={
                                 <div style={{width:200}}  >
-                                    <Button onClick={this.showFileModal} > 一键报警 </Button>
+                                    {/*<Button onClick={this.showFileModal} > 一键报警 </Button>*/}
                                 </div>
                             }>
                             <Modal

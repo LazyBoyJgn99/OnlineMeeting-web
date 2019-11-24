@@ -381,16 +381,17 @@ class MeetInfo extends Component {
             data.data[0].outsideJoinPersons.map((item)=>{
                 return others.push(item.name);
             })
+            form.resetFields();
             form.setFieldsValue({
-                title:data.data[0].topic,
+                // title:data.data[0].topic,
                 meetingRoom:data.data[0].meetRoomId,
-                description:data.data[0].content,
-                guests:data.data[0].joinPeopleId,
+                // description:data.data[0].content,
+                // guests:data.data[0].joinPeopleId,
                 dateTime:moment(data.data[0].reserveDate,"YYYY-MM-DD"),
                 startTime:moment(data.data[0].beginTime),
                 prepareTime:data.data[0].prepareTime,
                 continuedTime:data.data[0].lastTime,
-                others:others,
+                // others:others,
             })
             this.setState({
                 othersList:data.data[0].outsideJoinPersons,
@@ -435,16 +436,17 @@ class MeetInfo extends Component {
             data.data[0].outsideJoinPersons.map((item)=>{
                 return others.push(item.name);
             })
+            form.resetFields();
             form.setFieldsValue({
-                title:data.data[0].topic,
+                // title:data.data[0].topic,
                 meetingRoom:data.data[0].meetRoomId,
-                description:data.data[0].content,
-                guests:data.data[0].joinPeopleId,
+                // description:data.data[0].content,
+                // guests:data.data[0].joinPeopleId,
                 dateTime:moment(data.data[0].reserveDate,"YYYY-MM-DD"),
                 startTime:moment(data.data[0].beginTime),
                 prepareTime:data.data[0].prepareTime,
                 continuedTime:data.data[0].lastTime,
-                others:others,
+                // others:others,
             })
             this.setState({
                 othersList:data.data[0].outsideJoinPersons,

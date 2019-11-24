@@ -162,8 +162,6 @@ class FileDrawer extends Component {
                     dataSource={this.props.fileList}
                 />
 
-
-                //页面上使用a标签数组
                 <Anchor id="downloadDiv" style={{display: 'none'}}></Anchor>
 
             </Drawer>

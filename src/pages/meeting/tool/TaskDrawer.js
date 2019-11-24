@@ -155,29 +155,16 @@ class TaskDrawer extends Component {
                     return(<div>{i+1}</div>)
                 }
             },{
-                title:"文件名",
-                dataIndex:"fileName",
+                title:"会议任务",
+                dataIndex:"name",
             },{
-                title:"状态",
-                dataIndex:"status",
-                render:(item)=>{
-                    switch (item) {
-                        case 1:
-                            return "允许下载"
-                        case 2:
-                            return "禁止下载"
-                        default:
-                            return item
-                    }
-                }
+                title:"任务要求",
+                dataIndex:"content",
             },{
                 title:"操作",
                 render:(item)=>{
                     return(
                         <div>
-                            <Tooltip title="修改">
-                                <Button onClick={()=>{this.showUpdate(item.id,item.name,item.content)}}><Icon type="edit" /></Button>
-                            </Tooltip>
                             <Tooltip title="删除">
                                 <Button onClick={()=>{this.deleteOne(item.id)}}><Icon style={{color:"red"}}type={"delete"}></Icon></Button>
                             </Tooltip>
@@ -200,7 +187,7 @@ class TaskDrawer extends Component {
                 <Table
                     rowKey={record=>record.id}
                     columns={columns}
-                    dataSource={this.props.fileList} />
+                    dataSource={this.props.taskList} />
                 <Modal
                     title={"会议任务"}
                     visible={this.state.visible}

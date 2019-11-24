@@ -85,9 +85,10 @@ class MeetRoomManage extends Component {
             drawerVisible: false,
         });
     };
-    showDrawer=()=>{
+    showDrawer=(e)=>{
         this.setState({
             drawerVisible: true,
+            id:e
         });
     }
     showAddRole=()=>{
@@ -184,6 +185,7 @@ class MeetRoomManage extends Component {
                 "Content-Type": "application/json;charset=utf-8",
             },
             body: JSON.stringify({
+                id:this.state.id,
                 roleId:this.state.roleId,
                 name:this.state.roomName,
                 num:this.state.num,
@@ -207,10 +209,10 @@ class MeetRoomManage extends Component {
         });
     }
     //showOne
-    showOne = (ev,text,name,num,place,contain) =>{
+    showOne = (ev,id,name,num,place,contain) =>{
         console.log(ev)
-        console.log(text)
-        const url=golbal.localhostUrl+"IMeeting/meetRoom/showOne?MeetRoomId="+text;
+        console.log(id)
+        const url=golbal.localhostUrl+"IMeeting/meetRoom/showOne?MeetRoomId="+id;
         fetch(url, {
             method: "POST",
             mode: "cors",
@@ -228,12 +230,13 @@ class MeetRoomManage extends Component {
             let checkedKeys=[];
             let checkedDepartKeys=[];
             data.data[2].map( item =>{
-                return checkedKeys.push(item.id);
+                return checkedKeys.push(item.equipId);
             })
             data.data[4].map( item =>{
                 return checkedDepartKeys.push(item.departId);
             })
             this.setState({
+                id:id,
                 drawerVisible:true,
                 roomName:data.data[0].name,
                 num:data.data[0].num,

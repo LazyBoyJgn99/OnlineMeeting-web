@@ -11,17 +11,17 @@ class Head extends Component {
             username: "",
             password: "",
             visible: false,
-            name:"登陆",
+            name:"登录",
             loading: false,
         }
     }
-    //弹出登陆框
+    //弹出登录框
     showDrawer = () => {
         this.setState({
             visible: true,
         });
     }
-    //关闭登陆框
+    //关闭登录框
     onClose = () => {
         this.setState({
             visible: false,
@@ -39,7 +39,7 @@ class Head extends Component {
     passwordChange=(e)=>{
         this.setState({ password : e.target.value })
     }
-    //登陆
+    //登录
     enterLoading = () => {
         this.setState({ loading: true });
         this.sendAjax();
@@ -47,11 +47,11 @@ class Head extends Component {
         this.onClose();
 
     }
-    //点击登陆后旋转2秒
+    //点击登录后旋转2秒
     overLoading = () => {
         setInterval(() => {this.setState({ loading: false })}, 2000);
     }
-    //发送登陆请求
+    //发送登录请求
     sendAjax = () =>{
         //POST方式,IP为本机IP
         const username=this.state.username;//this.state.username;
@@ -75,7 +75,7 @@ class Head extends Component {
                 // get result
                 const data = json;
                 console.log(data);
-                if(data.message==="登陆成功"){
+                if(data.message==="登录成功"){
                     this.nameChange(data.data.name);
                     message.success(data.message);
                     this.onClose();
@@ -120,7 +120,7 @@ class Head extends Component {
                     <p>密码</p>
                     <Input type='password' placeholder='密码' onKeyUp={this.passwordChange}></Input>
                     <Button className={'headBtn1'} type='default' onClick={this.onClose}>忘记密码</Button>
-                    <Button className={'headBtn2'} type='primary' loading={this.state.loading} onClick={this.enterLoading} >登陆</Button>
+                    <Button className={'headBtn2'} type='primary' loading={this.state.loading} onClick={this.enterLoading} >登录</Button>
                     <Button className={'headBtn3'} type='default' onClick={this.sendAjax}>还没有账号？点击注册</Button>
                 </Drawer>
 

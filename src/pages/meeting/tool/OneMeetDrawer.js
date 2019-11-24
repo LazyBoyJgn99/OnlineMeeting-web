@@ -454,7 +454,8 @@ const OneMeetDrawer = Form.create({ name: 'form_in_modal' })(
                                         })(
                                             <DatePicker
                                                 placeholder="选择日期"
-                                                disabled={!this.props.changeAble||this.props.rob}
+                                                disabled={!this.props.changeAble}
+                                                // disabled={!this.props.changeAble||this.props.rob}
                                             />
                                         )}
                                     </Form.Item>
@@ -470,7 +471,8 @@ const OneMeetDrawer = Form.create({ name: 'form_in_modal' })(
                                                 placeholder="选择时间"
                                                 minuteStep={15}
                                                 format={'HH:mm'}
-                                                disabled={!this.props.changeAble||this.props.rob}
+                                                disabled={!this.props.changeAble}
+                                                // disabled={!this.props.changeAble||this.props.rob}
                                             />
                                         )}
                                     </Form.Item>
@@ -485,7 +487,8 @@ const OneMeetDrawer = Form.create({ name: 'form_in_modal' })(
                                             <Select
                                                 style={{ width: 140 }}
                                                 onChange={()=>{}}
-                                                disabled={!this.props.changeAble||this.props.rob}
+                                                disabled={!this.props.changeAble}
+                                                // disabled={!this.props.changeAble||this.props.rob}
                                             >
                                                 {timeList.map((item,i)=>{//roomList是后台数据列表
                                                     let T="";
@@ -517,7 +520,8 @@ const OneMeetDrawer = Form.create({ name: 'form_in_modal' })(
                                             <Select
                                                 style={{ width: 140 }}
                                                 onChange={()=>{}}
-                                                disabled={!this.props.changeAble||this.props.rob}
+                                                disabled={!this.props.changeAble}
+                                                // disabled={!this.props.changeAble||this.props.rob}
                                             >
                                                 {timeList.map((item,i)=>{//roomList是后台数据列表
                                                     let T="";

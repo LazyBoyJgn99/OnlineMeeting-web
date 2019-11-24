@@ -1,35 +1,34 @@
 import React, { Component } from 'react';
-import {Table, Card, Col, Row, Button, Tooltip, Icon, message, Input, Drawer, Modal} from "antd";
+import {Table, Card, Col, Row, Button, Tooltip, Icon, message, Input, Drawer, Modal, Select} from "antd";
 import golbal from '@/golbal';
 import Highlighter from 'react-highlight-words';
 class EquipRepairManage extends Component {
     componentDidMount(){
-        //this.selectAll();
+        this.selectAll();
     }
     state={
+        meet_room_id:0,
+        equip_id:0,
+        damage_info:"",
+        meetRoomList:[
+            {
+                "id": 1,
+                "name": "会议室一",
+                "num": "A01",
+                "place": "办公大楼A01室",
+                "contain": 40,
+                "availStatus": 1,
+                "nowStatus": 0,
+                "tenantId": 1,
+                "wifiCode": null,
+                "qrcodeAddress": null
+            }
+        ],
+        equipList:[],
         dataSource:[
             {
                 id:1,
                 meetRoomName:"会议室一",
-                upName:"桥东",
-                downName:"",
-                upTime:"2019-02-10 18:01",
-                downTime:"",
-                status:"未处理",
-            },
-            {
-                id:2,
-                meetRoomName:"会议室一",
-                upName:"厉从心",
-                downName:"",
-                upTime:"2019-02-10 13:01",
-                downTime:"",
-                status:"未处理",
-            },
-            {
-                id:3,
-                meetRoomName:"会议室一",
-                upName:"郭锦明",
                 downName:"桥东",
                 upTime:"2019-02-08 12:21",
                 downTime:"2019-02-09 15:21",
@@ -42,6 +41,8 @@ class EquipRepairManage extends Component {
         addOrChange:false,
         modalVisible: false,
         searchText:"",
+        repairName:"",
+
     }
     //表格查询
     getColumnSearchProps = (dataIndex) => ({
@@ -102,6 +103,7 @@ class EquipRepairManage extends Component {
     }
     //表格查询
 
+
     handleCancel = (e) => {
         console.log(e);
         this.setState({
@@ -114,10 +116,10 @@ class EquipRepairManage extends Component {
             drawerVisible: false,
         });
     }
-    showDelete=(ev,id)=>{
+    showDeal=(ev,id)=>{
         this.setState({
+            id:id,
             modalVisible: true,
-            equipId:id,
         });
     }
     showUpdate=(ev,id,name)=>{
@@ -135,16 +137,32 @@ class EquipRepairManage extends Component {
             equipName:"",
         });
     }
-    equipNameChange=(e)=>{
+    damage_infoChange=(e)=>{
         this.setState({
-            equipName: e.target.value,
+            damage_info: e.target.value,
         });
+    }
+    meetRoomChange=(e)=>{
+        console.log(e)
+        this.setState({
+            meet_room_id:e,
+        })
+    }
+    equipChange=(e)=>{
+        console.log(e)
+        this.setState({
+            equip_id:e,
+        })
+    }
+    repairNameChange=(e)=>{
+        this.setState({
+            repairName:e.target.value,
+        })
     }
 
     /////////////////////////////////////////////////////////////////////
-    //insertOne
-    insertOne = () =>{
-        const url=golbal.localhostUrl+"IMeeting/equip/insertOne?equipName="+this.state.equipName;
+    dealEquipRequair=()=>{
+        const url=golbal.localhostUrl+"IMeeting/equip/dealEquipRequair?repairName="+this.state.repairName+"&id="+this.state.id;
         fetch(url, {
             method: "POST",
             mode: "cors",
@@ -162,15 +180,16 @@ class EquipRepairManage extends Component {
             if(data.status){
                 message.success("操作成功！")
             }
+            this.handleCancel();
             this.selectAll();
         }).catch(function (e) {
             console.log("fetch fail");
             alert('系统错误');
         });
     }
-    //updateOne
-    updateOne = () =>{
-        const url=golbal.localhostUrl+"IMeeting/equip/updateOne?equipName="+this.state.equipName+"&equipId="+this.state.equipId;
+    //insertOne
+    insertOne = () =>{
+        const url=golbal.localhostUrl+"IMeeting/equip/reportDemage";
         fetch(url, {
             method: "POST",
             mode: "cors",
@@ -178,7 +197,11 @@ class EquipRepairManage extends Component {
             headers: {
                 "Content-Type": "application/json;charset=utf-8",
             },
-            body: JSON.stringify({}),
+            body: JSON.stringify({
+                meet_room_id:this.state.meet_room_id,
+                equip_id:this.state.equip_id,
+                damage_info:this.state.damage_info,
+            }),
         }).then(function (res) {//function (res) {} 和 res => {}效果一致
             return res.json()
         }).then(json => {
@@ -222,34 +245,58 @@ class EquipRepairManage extends Component {
             alert('系统错误');
         });
     }
-    // //selectAll
-    // selectAll = () =>{
-    //     const url=golbal.localhostUrl+"IMeeting/equip/selectAll";
-    //     fetch(url, {
-    //         method: "POST",
-    //         mode: "cors",
-    //         credentials:"include",//跨域携带cookie
-    //         headers: {
-    //             "Content-Type": "application/json;charset=utf-8",
-    //         },
-    //         body: JSON.stringify({}),
-    //     }).then(function (res) {//function (res) {} 和 res => {}效果一致
-    //         return res.json()
-    //     }).then(json => {
-    //         // get result
-    //         const data = json;
-    //         console.log(data);
-    //         this.setState({
-    //             dataSource:data.data,
-    //             drawerVisible:false,
-    //             addOrChange:false,
-    //             modalVisible: false,
-    //         })
-    //     }).catch(function (e) {
-    //         console.log("fetch fail");
-    //         alert('系统错误');
-    //     });
-    // }
+    //selectAll
+    selectAll = () =>{
+        this.userGetEquipRequairInfos();
+        const url=golbal.localhostUrl+"IMeeting/meetRoom/selectAll";
+        fetch(url, {
+            method: "POST",
+            mode: "cors",
+            credentials:"include",//跨域携带cookie
+            headers: {
+                "Content-Type": "application/json;charset=utf-8",
+            },
+            body: JSON.stringify({}),
+        }).then(function (res) {//function (res) {} 和 res => {}效果一致
+            return res.json()
+        }).then(json => {
+            // get result
+            const data = json;
+            console.log(data);
+            this.setState({
+                meetRoomList:data.data[0],
+                equipList:data.data[1],
+            })
+        }).catch(function (e) {
+            console.log("fetch fail");
+            alert('系统错误');
+        });
+    }
+    //userGetEquipRequairInfos
+    userGetEquipRequairInfos=()=>{
+        const url=golbal.localhostUrl+"IMeeting/equip/getEquipRequairInfos";
+        fetch(url, {
+            method: "POST",
+            mode: "cors",
+            credentials:"include",//跨域携带cookie
+            headers: {
+                "Content-Type": "application/json;charset=utf-8",
+            },
+            body: JSON.stringify({}),
+        }).then(function (res) {//function (res) {} 和 res => {}效果一致
+            return res.json()
+        }).then(json => {
+            // get result
+            const data = json;
+            console.log(data);
+            this.setState({
+                dataSource:data.data
+            })
+        }).catch(function (e) {
+            console.log("fetch fail");
+            alert('系统错误');
+        });
+    }
     render() {
         const columns=[
             {
@@ -261,28 +308,21 @@ class EquipRepairManage extends Component {
             },{
                 title:"会议室名",
                 dataIndex:"meetRoomName",
-                key:"meetRoomName",
-                ...this.getColumnSearchProps("meetRoomName")
+            },{
+                title:"设备名",
+                dataIndex:"equipName",
             },{
                 title:"维修人",
-                dataIndex:"downName",
-                key:"downName",
-                ...this.getColumnSearchProps("name")
+                dataIndex:"repairName",
             },{
                 title:"维修时间",
-                dataIndex:"downTime",
-                key:"downTime",
-                ...this.getColumnSearchProps("downTime")
+                dataIndex:"repairTime",
             },{
                 title:"状态",
                 dataIndex:"status",
-                key:"status",
-                ...this.getColumnSearchProps("status")
             },{
                 title:"报修人",
-                dataIndex:"upName",
-                key:"upName",
-                ...this.getColumnSearchProps("name")
+                dataIndex:"userName",
             },{
                 title:"操作",
                 render:(item)=>{
@@ -291,8 +331,8 @@ class EquipRepairManage extends Component {
                             <Tooltip title="修改">
                                 <Button onClick={(ev)=>{this.showUpdate(ev,item.id,item.name)}}><Icon type="edit" /></Button>
                             </Tooltip>
-                            <Tooltip title="删除">
-                                <Button onClick={(ev)=>{this.showDelete(ev,item.id)}}><Icon style={{color:"red"}}type={"delete"}></Icon></Button>
+                            <Tooltip title="处理">
+                                <Button onClick={(ev)=>{this.showDeal(ev,item.id)}}><Icon style={{color:"red"}}type={"check"}></Icon></Button>
                             </Tooltip>
                         </div>
                     )
@@ -304,12 +344,12 @@ class EquipRepairManage extends Component {
                 <Row>
                     <Col span={18} offset={3}>
                         <Card
-                            title={<h2 style={{float:'left',marginBottom:-3}}>设备报修管理</h2>}
+                            title={<h2 style={{float:'left',marginBottom:-3}}>设备报修</h2>}
                             extra={
                                 <div style={{width:200}} >
                                     <Row>
                                         <Col span={24}>
-                                            <Button type="primary" onClick={this.showAddEquip}>添加报修设备</Button>
+                                            <Button type="primary" onClick={this.showAddEquip}>我要报修</Button>
                                         </Col>
                                     </Row>
                                 </div>
@@ -320,12 +360,9 @@ class EquipRepairManage extends Component {
                     </Col>
                 </Row>
                 <Drawer
-                    title={
-                        this.state.addOrChange?
-                            <Button href="#" type={"primary"} onClick={this.insertOne}>添加</Button>
-                            :
-                            <Button href="#" type={"primary"} onClick={this.updateOne}>保存修改</Button>
-                    }
+                    title={<Button href="#" type={"primary"} onClick={this.insertOne}>报修</Button>}
+
+
                     placement="right"
                     closable={false}
                     onClose={this.onClose}
@@ -333,18 +370,34 @@ class EquipRepairManage extends Component {
                     width={"60%"}
                 >
                     <Card>
+                        会议室名称：
+                        <Select style={{ width: 120 }} onChange={this.meetRoomChange}>
+                            {
+                                this.state.meetRoomList.map((item,j)=>{
+                                    return <Select.Option key={j} value={item.id}>{item.name}</Select.Option>
+                                })
+                            }
+                        </Select>
                         设备名称：
-                        <Input value={this.state.equipName} onChange={this.equipNameChange}/>
+                        <Select style={{ width: 120 }} onChange={this.equipChange}>
+                            {
+                                this.state.equipList.map((item,j)=>{
+                                    return <Select.Option key={j} value={item.id}>{item.name}</Select.Option>
+                                })
+                            }
+                        </Select>
+                        <br/>
+                        报修原因：
+                        <Input value={this.state.damage_info} onChange={this.damage_infoChange}/>
                     </Card>
                 </Drawer>
                 <Modal
                     visible={this.state.modalVisible}
-                    onOk={this.deleteOne}
+                    onOk={this.dealEquipRequair}
                     onCancel={this.handleCancel}
-                    okText={"确定"}
-                    cancelText={"我再想想"}
                 >
-                    <h3>您确定要删除此设备吗</h3>
+                    维修人：
+                    <Input value={this.state.repairName} onChange={this.repairNameChange}/>
                 </Modal>
             </div>
         );

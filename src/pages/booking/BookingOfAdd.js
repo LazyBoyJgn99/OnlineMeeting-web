@@ -38,7 +38,7 @@ class BookingOfAdd extends Component {
         return (
             <div >
                 BookingOfAdd
-                <Button onClick={this.sendAjax}>登陆</Button>
+                <Button onClick={this.sendAjax}>登录</Button>
             </div>
         );
     }

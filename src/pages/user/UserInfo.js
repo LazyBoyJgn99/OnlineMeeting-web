@@ -133,7 +133,6 @@ class UserInfo extends Component {
             console.log("fetch fail");
             alert('系统错误');
         });
-
     }
     //修改
     updateResume=()=>{

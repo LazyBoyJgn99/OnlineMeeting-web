@@ -124,9 +124,6 @@ class JoinPersonManage extends Component {
             // get result
             const data = json;
             console.log(data);
-            if(data.status){
-                message.success("操作成功！")
-            }
             this.setState({
                 meetingId:id,
                 drawerVisible:true,
@@ -247,6 +244,9 @@ class JoinPersonManage extends Component {
                 dataIndex:"status",
                 key:"status",
                 ...this.getColumnSearchProps("status"),
+            },{
+                title:"签到时间",
+                dataIndex:"signTime",
             },{
                 title:"操作",
                 render:(item)=>{

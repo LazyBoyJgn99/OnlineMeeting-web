@@ -140,40 +140,32 @@ class BizDemo extends Component {
         ],
         areaData:[
             {
-                year: "1991",
-                value: 15468
-            },
-            {
-                year: "1992",
-                value: 16100
-            },
-            {
-                year: "1993",
-                value: 15900
-            },
-            {
-                year: "1994",
-                value: 17409
-            },
-            {
-                year: "1995",
-                value: 17000
-            },
-            {
-                year: "1996",
-                value: 31056
-            },
-            {
-                year: "1997",
-                value: 31982
-            },
-            {
-                year: "1998",
-                value: 32040
-            },
-            {
-                year: "1999",
-                value: 33233
+                year: "6%",
+                value: 6
+            },{
+                year: "7%",
+                value: 7
+            },{
+                year: "9%",
+                value: 9
+            },{
+                year: "7%",
+                value: 7
+            },{
+                year: "10%",
+                value: 10
+            },{
+                year: "14%",
+                value: 14
+            },{
+                year: "15%",
+                value: 15
+            },{
+                year: "16%",
+                value: 16
+            },{
+                year: "14%",
+                value: 14
             }
         ],
         free:100

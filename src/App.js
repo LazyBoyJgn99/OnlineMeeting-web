@@ -46,6 +46,7 @@ import WeekMeeting from "./pages/meeting/WeekMeeting";
 import DoorApply from "./pages/others/DoorApply";
 import EquipRepair from "./pages/others/EquipRepair";
 import BookMeetingManager from "./pages/manage/BookMeetingManager";
+import MyVideoMeet from "./pages/myMeeting/MyVideoMeet";
 
 class App extends Component {
     componentWillMount(){
@@ -79,7 +80,7 @@ class App extends Component {
             pwd_code:"!!!",
             codeTime:0,
             visible: false,
-            name:"请先登陆",
+            name:"请先登录",
             loading: false,
             roleList:[],
             loginFlag:0,
@@ -173,7 +174,7 @@ class App extends Component {
             display_Login:'none',
         });
     }
-    //返回登陆页面
+    //返回登录页面
     showLogin=()=>{
         this.setState({
             display_ChangeSuccess:'none',
@@ -183,18 +184,18 @@ class App extends Component {
             display_Login:'block',
         });
     }
-    /////////////////////////////////////////////////登陆/////////////////////////////////////////////////
+    /////////////////////////////////////////////////登录/////////////////////////////////////////////////
     //注册
     logUp=()=>{
         message.warn("对不起，注册系统还未开放，请联系管理员申请账号，谢谢");
     }
-    //登陆与加载
+    //登录与加载
     enterLoading = () => {
         this.setState({ loading: true });
         this.sendAjax();
         this.overLoading();
     }
-    //点击登陆后旋转2秒
+    //点击登录后旋转2秒
     overLoading = () => {
         setInterval(() => {this.setState({ loading: false })}, 2000);
     }
@@ -203,7 +204,7 @@ class App extends Component {
     nameChange=(e)=>{
         this.setState({ name : e })
     }
-    //退出登陆
+    //退出登录
     loginOut=()=>{
         this.setState({
             GLY_Mode:false,
@@ -211,7 +212,7 @@ class App extends Component {
             display_Forget:'none',
             display_Menu:'none',
             display_Login:'block',
-            name:"请先登陆",
+            name:"请先登录",
         });
     }
     /////////////////////////////////////////////////4个fetch请求/////////////////////////////////////////////////
@@ -323,7 +324,7 @@ class App extends Component {
             alert('系统错误');
         });
     }
-    //发送登陆请求
+    //发送登录请求
     sendAjax = () =>{
         //POST方式,IP为本机IP
         const username=this.state.username;//this.state.username;
@@ -352,7 +353,7 @@ class App extends Component {
                 console.log(data);
                 if(data.status===true){
                     this.nameChange(data.data.name);
-                    message.success("登陆成功！");
+                    message.success("登录成功！");
                     this.toManager();
                     this.setState({
                         mode:"用户模式",
@@ -383,9 +384,9 @@ class App extends Component {
         }
 
     }
-    //判断是否已经登陆
+    //判断是否已经登录
     hadLog = () =>{
-        console.log("判断是否已经登陆")
+        console.log("判断是否已经登录")
         //POST方式,IP为本机IP
         const url=golbal.localhostUrl+"IMeeting/showUserinfo"
         // const url="http://39.106.56.132:8080/IMeeting/showUserinfo"
@@ -430,7 +431,7 @@ class App extends Component {
             // createHashHistory().replace(golbal.webUrl)//失败例子1
             document.getElementById("toIndex").click();//返回首页的Link
             if(this.state.display_Head==='block'){
-                alert("登陆超时，请重新登陆");
+                alert("登录超时，请重新登录");
                 // window.location.href = golbal.webUrl;//失败例子2
             }
             this.setState({
@@ -651,7 +652,7 @@ class App extends Component {
                                     {/*<Menu.Item><Link to='/book/HY'>日志管理</Link></Menu.Item>*/}
                                 </Menu.SubMenu>
                                 <Menu.SubMenu  title={<span><Icon type='appstore'/><span>其它</span></span>} style={{display:this.state.display_GLY}}>
-                                    <Menu.Item><Link to='/manage/detail'>日志管理</Link></Menu.Item>
+                                    {/*<Menu.Item><Link to='/manage/detail'>日志管理</Link></Menu.Item>*/}
                                 </Menu.SubMenu>
                                 {/*开会者预订端功能模块*/}
                                 <Menu.SubMenu  title={<span><Icon type="tool" /><span>会议管理</span></span>} style={{display:this.state.display_User}}>
@@ -664,6 +665,7 @@ class App extends Component {
                                 </Menu.SubMenu>
                                 <Menu.SubMenu  title={<span><Icon type='team'/><span>我的会议</span></span>} style={{display:this.state.display_User}}>
                                     <Menu.Item><Link to='/myMeeting/myJoin'>会议安排</Link></Menu.Item>
+                                    <Menu.Item><Link to='/myMeeting/myVideoMeet'>视频会议</Link></Menu.Item>
                                 </Menu.SubMenu>
                                 <Menu.SubMenu  title={<span><Icon type="video-camera" /><span>会议监控</span></span>} style={{display:this.state.display_User}}>
                                     <Menu.Item><Link to='/manage/joinPerson'>签到记录</Link></Menu.Item>
@@ -671,8 +673,8 @@ class App extends Component {
                                 </Menu.SubMenu>
                                 <Menu.SubMenu  title={<span><Icon type='user'/><span>个人中心</span></span>} style={{display:this.state.display_User}}>
                                     <Menu.Item><Link to='/user/info'>我的资料</Link></Menu.Item>
-                                    <Menu.Item><Link to='/user/'>我的消息</Link></Menu.Item>
-                                    <Menu.Item><Link to='/user/'>我的文件</Link></Menu.Item>
+                                    {/*<Menu.Item><Link to='/user/'>我的消息</Link></Menu.Item>*/}
+                                    {/*<Menu.Item><Link to='/user/'>我的文件</Link></Menu.Item>*/}
                                     {/*<Menu.Item><Link to='/book/HY'>面部信息录入</Link></Menu.Item>*/}
                                 </Menu.SubMenu>
                                 <Menu.SubMenu  title={<span><Icon type='tags'/><span>群组管理</span></span>} style={{display:this.state.display_User}}>
@@ -681,7 +683,7 @@ class App extends Component {
                                 <Menu.SubMenu  title={<span><Icon type='appstore'/><span>其它</span></span>} style={{display:this.state.display_User}}>
                                     <Menu.Item><Link to='/others/equipRepair'>设备报修</Link></Menu.Item>
                                     <Menu.Item><Link to='/others/doorApply'>开门申请</Link></Menu.Item>
-                                    <Menu.Item><Link to='/others/'>通讯录</Link></Menu.Item>
+                                    {/*<Menu.Item><Link to='/others/'>通讯录</Link></Menu.Item>*/}
                                 </Menu.SubMenu>
                                 {/*用户预订功能模块*/}
                                 <Menu.SubMenu  title={<span><Icon type='tool'/><span>会议管理</span></span>} style={{display:this.state.display_Visitor}}>
@@ -708,24 +710,24 @@ class App extends Component {
                                 <Menu.SubMenu  title={<span><Icon type='appstore'/><span>其它</span></span>} style={{display:this.state.display_Visitor}}>
                                     <Menu.Item><Link to='/others/equipRepair'>设备报修</Link></Menu.Item>
                                     <Menu.Item><Link to='/others/doorApply'>开门申请</Link></Menu.Item>
-                                    <Menu.Item><Link to='/others/'>通讯录</Link></Menu.Item>
+                                    {/*<Menu.Item><Link to='/others/'>通讯录</Link></Menu.Item>*/}
                                 </Menu.SubMenu>
                             </Menu>
                         </Layout.Sider>
 
                         {/*****************************************核心页面*****************************************/}
                         <Layout.Content className='contentLayout'>
-                            {/*************************************登陆与找回密码**************************************/}
+                            {/*************************************登录与找回密码**************************************/}
                             <Row style={{marginTop:10,borderRadius:10}}>
                                 <Col span={10} offset={7} >
-                            {/*登陆*/}
-                            <Card title="登陆" className="loginCard" style={{ display:this.state.display_Login }}>
+                            {/*登录*/}
+                            <Card title="登录" className="loginCard" style={{ display:this.state.display_Login }}>
                                 <Input prefix={<Icon type='user'/>} type='' placeholder='用户名' onKeyUp={this.usernameChange}></Input>
                                 <br/>
                                 <br/>
                                 <Input prefix={<Icon type='lock'/>} type='password' placeholder='密码' onKeyUp={this.passwordChange}></Input>
                                 <Button className={'headBtn1'} type='default' onClick={this.showForget}>忘记密码</Button>
-                                <Button className={'headBtn2'} type='primary' loading={this.state.loading} onClick={this.enterLoading} >登陆</Button>
+                                <Button className={'headBtn2'} type='primary' loading={this.state.loading} onClick={this.enterLoading} >登录</Button>
                                 <Button className={'headBtn3'} type='default' onClick={this.logUp}>还没有账号？点击注册</Button>
                             </Card>
                             {/*找回密码*/}
@@ -740,7 +742,7 @@ class App extends Component {
                                 <br/>
                                 <Input type='' className='phoneCodeInput' placeholder='输入验证码' onKeyUp={this.phoneCodeChange}></Input>
                                 <Button className='forgetBtn2' type='default' disabled={this.state.disabled_getCode} onClick={this.getPhoneCode}>{this.state.codeTime>0?"请"+this.state.codeTime+"秒后再试":"获取验证码"}</Button>
-                                <Button className='forgetBtn1' type='default' onClick={this.showLogin}>返回登陆</Button>
+                                <Button className='forgetBtn1' type='default' onClick={this.showLogin}>返回登录</Button>
                                 <Button className='forgetBtn1' type='primary' onClick={this.compareCode}>下一步</Button>
                             </Card>
                             {/*修改密码*/}
@@ -754,7 +756,7 @@ class App extends Component {
                                 <Input type='' placeholder='输入新密码' onKeyUp={this.passwordChange}></Input>
                                 <br/><br/>
                                 <Input type='' placeholder='再次输入密码' onKeyUp={this.newPasswordChange}></Input>
-                                <Button className='forgetBtn1' type='default' onClick={this.showLogin}>返回登陆</Button>
+                                <Button className='forgetBtn1' type='default' onClick={this.showLogin}>返回登录</Button>
                                 <Button className='forgetBtn1' type='primary' onClick={this.comparePassword}>修改密码</Button>
                             </Card>
                             {/*修改成功*/}
@@ -762,14 +764,14 @@ class App extends Component {
                                 <Steps style={{ width: '440px'}} current={2}>
                                     <Steps.Step style={{ margin:0}} title="第一步" description="获取验证码" />
                                     <Steps.Step style={{ margin:0,marginRight:30}} title="第二步" description="修改密码" />
-                                    <Steps.Step style={{ margin:0}} title="第三步" description="修改成功,返回登陆" />
+                                    <Steps.Step style={{ margin:0}} title="第三步" description="修改成功,返回登录" />
                                 </Steps>
-                                <Button className='forgetBtn1' type='primary' onClick={this.showLogin}>返回登陆</Button>
+                                <Button className='forgetBtn1' type='primary' onClick={this.showLogin}>返回登录</Button>
                             </Card>
                                 </Col>
                             </Row>
                             {/*************************************页面路由**************************************/}
-                            {/*登陆后内部页面链接*/}
+                            {/*登录后内部页面链接*/}
                             <div style={{display:this.state.display_Head}}>
                                 <Route path={"/book/address"} component={B_O_Add} />
                                 <Route path={"/book/time"} component={B_O_Time} />
@@ -803,6 +805,7 @@ class App extends Component {
                                 <Route path={"/manage/meetInfo"} component={MeetInfoManage} />
                                 <Route path={"/manage/para"} component={ManageIndex} />
                                 <Route path={"/myMeeting/myJoin"} component={MyJoinMeeting} />
+                                <Route path={"/myMeeting/myVideoMeet"} component={MyVideoMeet} />
                                 {/*<Route path={"/graph/demo1"} component={GGDemo1} />*/}
                                 {/*<Route path={"/index2"} component={GGIndex} />*/}
                                 {/*<Route path={"/index1"} component={ViserDemo1} />*/}
@@ -853,7 +856,7 @@ class Head extends Component {
             username: "",
             password: "",
             visible: false,
-            name:"登陆",
+            name:"登录",
             loading: false,
         }
     }
@@ -861,18 +864,19 @@ class Head extends Component {
     handleChange = (msg) =>{
         this.props.changeMode(msg);
         console.log(`selected ${msg}`);
+        document.getElementById("toIndex").click();//返回首页的Link
     }
-    //登陆身份
+    //登录身份
     loginRole = (msg) => {
         this.props.changeMode(msg);
     }
-    //弹出登陆框
+    //弹出登录框
     showDrawer = () => {
         this.setState({
             visible: true,
         });
     }
-    //关闭登陆框
+    //关闭登录框
     onClose = () => {
         this.setState({
             visible: false,
@@ -906,7 +910,7 @@ class Head extends Component {
         });
     }
 
-    //发送退出登陆请求
+    //发送退出登录请求
     logout = () =>{
         //POST方式,IP为本机IP
         // const url="http://39.106.56.132:8080/IMeeting/logout"
@@ -942,7 +946,7 @@ class Head extends Component {
 
     //主函数
     render() {
-        const loginOut=(<div onClick={this.showDrawer}>{"退出登陆"}</div>);
+        const loginOut=(<div onClick={this.showDrawer}>{"退出登录"}</div>);
         return (
             <div className={'head'} style={this.props.style}>
                 {/*right*/}
@@ -957,7 +961,7 @@ class Head extends Component {
                 {/*)}*/}
                 {/*/>*/}
 
-                {/*测试区 登陆模式*/}
+                {/*测试区 登录模式*/}
                 <div style={this.props.GLY_Mode?{ display: "block" }:{ display: "none" }}>
                     <Select className={'headBtn1'} defaultValue={this.props.mode} style={{ width: 120 }} onChange={this.handleChange}>
                         {/*<Select.Option value="游客模式">游客模式</Select.Option>*/}
@@ -966,7 +970,7 @@ class Head extends Component {
                     </Select>
                 </div>
 
-                {/*测试区 登陆模式*/}
+                {/*测试区 登录模式*/}
 
                 {/*退出登录*/}
                 <Popover title="" content={loginOut} >
@@ -976,7 +980,7 @@ class Head extends Component {
                 {/*<Button className={'headBtn1'} type='primary' onClick={this.loginRole}><Icon type="ellipsis" /></Button>*/}
                 {/*搜索框*/}
                 {/*<Input className={'searchText'} suffix={<Icon type="search"  />} />*/}
-                {/*抽屉式登陆页面*/}
+                {/*抽屉式登录页面*/}
                 {/*<Drawer title="用户登录" placement="right" onClose={this.onClose} visible={this.state.visible}>*/}
                     {/*<p>用户</p>*/}
                     {/*<Input type='' placeholder='用户名' onKeyUp={this.usernameChange}></Input>*/}
@@ -985,10 +989,10 @@ class Head extends Component {
                     {/*<p>密码</p>*/}
                     {/*<Input type='password' placeholder='密码' onKeyUp={this.passwordChange}></Input>*/}
                     {/*<Button className={'headBtn1'} type='default' onClick={this.onClose}>忘记密码</Button>*/}
-                    {/*<Button className={'headBtn2'} type='primary' loading={this.state.loading} onClick={this.enterLoading} >登陆</Button>*/}
+                    {/*<Button className={'headBtn2'} type='primary' loading={this.state.loading} onClick={this.enterLoading} >登录</Button>*/}
                     {/*<Button className={'headBtn3'} type='default' onClick={this.sendAjax}>还没有账号？点击注册</Button>*/}
                 {/*</Drawer>*/}
-                {/*退出登陆*/}
+                {/*退出登录*/}
                 <Modal
                     visible={this.state.visible}
                     onOk={this.handleOk}

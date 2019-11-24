@@ -7,6 +7,7 @@ class EquipRepair extends Component {
         this.selectAll();
     }
     state={
+        id:0,
         meet_room_id:0,
         equip_id:0,
         damage_info:"",
@@ -125,11 +126,12 @@ class EquipRepair extends Component {
             addOrChange:false,
             drawerVisible: true,
             equipName:name,
-            equipId:id,
+            id:id,
         });
     }
     showAddEquip=()=>{
         this.setState({
+            id:0,
             addOrChange:true,
             drawerVisible: true,
             equipName:"",
@@ -143,13 +145,13 @@ class EquipRepair extends Component {
     meetRoomChange=(e)=>{
         console.log(e)
         this.setState({
-            meet_room_id:0,
+            meet_room_id:e,
         })
     }
     equipChange=(e)=>{
         console.log(e)
         this.setState({
-            equip_id:0,
+            equip_id:e,
         })
     }
 
@@ -157,32 +159,63 @@ class EquipRepair extends Component {
     //insertOne
     insertOne = () =>{
         const url=golbal.localhostUrl+"IMeeting/equip/reportDemage";
-        fetch(url, {
-            method: "POST",
-            mode: "cors",
-            credentials:"include",//跨域携带cookie
-            headers: {
-                "Content-Type": "application/json;charset=utf-8",
-            },
-            body: JSON.stringify({
-                meet_room_id:this.state.meet_room_id,
-                equip_id:this.state.equip_id,
-                damage_info:this.state.damage_info,
-            }),
-        }).then(function (res) {//function (res) {} 和 res => {}效果一致
-            return res.json()
-        }).then(json => {
-            // get result
-            const data = json;
-            console.log(data);
-            if(data.status){
-                message.success("操作成功！")
-            }
-            this.selectAll();
-        }).catch(function (e) {
-            console.log("fetch fail");
-            alert('系统错误');
-        });
+        if(this.state.id===0){
+            fetch(url, {
+                method: "POST",
+                mode: "cors",
+                credentials:"include",//跨域携带cookie
+                headers: {
+                    "Content-Type": "application/json;charset=utf-8",
+                },
+                body: JSON.stringify({
+                    meetRoomId:this.state.meet_room_id,
+                    equipId:this.state.equip_id,
+                    damageInfo:this.state.damage_info,
+                }),
+            }).then(function (res) {//function (res) {} 和 res => {}效果一致
+                return res.json()
+            }).then(json => {
+                // get result
+                const data = json;
+                console.log(data);
+                if(data.status){
+                    message.success("操作成功！")
+                }
+                this.selectAll();
+            }).catch(function (e) {
+                console.log("fetch fail");
+                alert('系统错误');
+            });
+        }else {
+            fetch(url, {
+                method: "POST",
+                mode: "cors",
+                credentials:"include",//跨域携带cookie
+                headers: {
+                    "Content-Type": "application/json;charset=utf-8",
+                },
+                body: JSON.stringify({
+                    id:this.state.id,
+                    meetRoomId:this.state.meet_room_id,
+                    equipId:this.state.equip_id,
+                    damageInfo:this.state.damage_info,
+                }),
+            }).then(function (res) {//function (res) {} 和 res => {}效果一致
+                return res.json()
+            }).then(json => {
+                // get result
+                const data = json;
+                console.log(data);
+                if(data.status){
+                    message.success("操作成功！")
+                }
+                this.selectAll();
+            }).catch(function (e) {
+                console.log("fetch fail");
+                alert('系统错误');
+            });
+        }
+
     }
     //deleteOne
     deleteOne = () =>{
@@ -214,6 +247,7 @@ class EquipRepair extends Component {
     }
     //selectAll
     selectAll = () =>{
+        this.userGetEquipRequairInfos();
         const url=golbal.localhostUrl+"IMeeting/meetRoom/selectAll";
         fetch(url, {
             method: "POST",
@@ -238,6 +272,31 @@ class EquipRepair extends Component {
             alert('系统错误');
         });
     }
+    //userGetEquipRequairInfos
+    userGetEquipRequairInfos=()=>{
+        const url=golbal.localhostUrl+"IMeeting/equip/userGetEquipRequairInfos";
+        fetch(url, {
+            method: "POST",
+            mode: "cors",
+            credentials:"include",//跨域携带cookie
+            headers: {
+                "Content-Type": "application/json;charset=utf-8",
+            },
+            body: JSON.stringify({}),
+        }).then(function (res) {//function (res) {} 和 res => {}效果一致
+            return res.json()
+        }).then(json => {
+            // get result
+            const data = json;
+            console.log(data);
+            this.setState({
+                dataSource:data.data
+            })
+        }).catch(function (e) {
+            console.log("fetch fail");
+            alert('系统错误');
+        });
+    }
     render() {
         const columns=[
             {
@@ -248,24 +307,48 @@ class EquipRepair extends Component {
                 }
             },{
                 title:"会议室名",
-                dataIndex:"meetRoomName",
-                key:"meetRoomName",
-                ...this.getColumnSearchProps("meetRoomName")
+                dataIndex:"meetRoomId",
+                render:(item)=>{
+                    let name=""
+                    this.state.meetRoomList.map((room)=>{
+                        return item===room.id?
+                        name=room.name:null
+                    })
+                    return name
+                }
+            },{
+                title:"设备名",
+                dataIndex:"equipId",
+                render:(item)=>{
+                    let name=""
+                    this.state.equipList.map((equip)=>{
+                        return item===equip.id?
+                            name=equip.name:null
+                    })
+                    return name
+                }
             },{
                 title:"维修人",
-                dataIndex:"downName",
-                key:"downName",
-                ...this.getColumnSearchProps("name")
+                dataIndex:"repairName",
             },{
                 title:"维修时间",
-                dataIndex:"downTime",
-                key:"downTime",
-                ...this.getColumnSearchProps("downTime")
+                dataIndex:"repairTime",
+            },{
+                title:"报修信息",
+                dataIndex:"damageInfo"
             },{
                 title:"状态",
                 dataIndex:"status",
-                key:"status",
-                ...this.getColumnSearchProps("status")
+                render:(item)=>{
+                    switch (item) {
+                        case 0 :
+                            return "未处理"
+                        case 1 :
+                            return "已修复"
+                        default :
+                            return item
+                    }
+                }
             },{
                 title:"操作",
                 render:(item)=>{
@@ -274,9 +357,9 @@ class EquipRepair extends Component {
                             <Tooltip title="修改">
                                 <Button onClick={(ev)=>{this.showUpdate(ev,item.id,item.name)}}><Icon type="edit" /></Button>
                             </Tooltip>
-                            <Tooltip title="删除">
-                                <Button onClick={(ev)=>{this.showDelete(ev,item.id)}}><Icon style={{color:"red"}}type={"delete"}></Icon></Button>
-                            </Tooltip>
+                            {/*<Tooltip title="删除">*/}
+                                {/*<Button onClick={(ev)=>{this.showDelete(ev,item.id)}}><Icon style={{color:"red"}}type={"delete"}></Icon></Button>*/}
+                            {/*</Tooltip>*/}
                         </div>
                     )
                 }
@@ -334,15 +417,6 @@ class EquipRepair extends Component {
                         <Input value={this.state.damage_info} onChange={this.damage_infoChange}/>
                     </Card>
                 </Drawer>
-                <Modal
-                    visible={this.state.modalVisible}
-                    onOk={this.deleteOne}
-                    onCancel={this.handleCancel}
-                    okText={"确定"}
-                    cancelText={"我再想想"}
-                >
-                    <h3>您确定要删除此设备吗</h3>
-                </Modal>
             </div>
         );
     }
